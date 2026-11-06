@@ -1,3 +1,0 @@
-ordinary function call :    2.28 ns
-getppid() system call  :   70.33 ns
-system call / function :      31x more expensive
