@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MemShield – Interactive Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1f;--card:rgba(255,255,255,.055);--bd:rgba(255,255,255,.12);--tx:#eef1ff;--mut:#9aa3c7;--a:#8b5cf6;--b:#ec4899;--ok:#34d399;--bad:#fb7185;--warn:#fbbf24;--r:18px}
+body[data-theme=m1]{--a:#ff5a5f;--b:#ff9f43}
+body[data-theme=m2]{--a:#22d3ee;--b:#3b82f6}
+body[data-theme=m3]{--a:#34d399;--b:#a3e635}
+body[data-theme=end]{--a:#fbbf24;--b:#f472b6}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',system-ui,sans-serif;color:var(--tx);background:var(--bg);min-height:100vh;line-height:1.5;
+background-image:radial-gradient(900px 500px at 10% -10%,color-mix(in srgb,var(--a) 35%,transparent),transparent),radial-gradient(800px 500px at 100% 0%,color-mix(in srgb,var(--b) 28%,transparent),transparent),radial-gradient(700px 500px at 50% 110%,color-mix(in srgb,var(--a) 18%,transparent),transparent);background-attachment:fixed;transition:background .5s}
+.mono{font-family:'JetBrains Mono',monospace}
+header.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(10,14,31,.72);border-bottom:1px solid var(--bd);display:flex;gap:14px;align-items:center;padding:10px 18px;overflow-x:auto}
+.brand{font-weight:700;font-size:18px;white-space:nowrap;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav{display:flex;gap:6px}
+nav button{font:inherit;font-size:13px;color:var(--mut);background:transparent;border:1px solid transparent;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+nav button:hover{color:var(--tx);border-color:var(--bd)}
+nav button.on{color:#0a0e1f;background:linear-gradient(90deg,var(--a),var(--b));font-weight:600}
+main{max-width:1080px;margin:0 auto;padding:26px 18px 90px}
+.view{display:none;animation:in .35s ease}.view.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.01em}
+h3{font-size:17px}
+.grad{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{display:inline-block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);font-weight:600;margin-bottom:8px}
+.lead{color:var(--mut);max-width:760px;margin:8px 0 22px;font-size:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:18px;backdrop-filter:blur(6px)}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.sec{margin-top:30px}
+.sec>h3{font-size:20px;margin-bottom:4px}
+.sec>p.sub{color:var(--mut);font-size:14px;margin-bottom:12px}
+.explain{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media(max-width:640px){.explain{grid-template-columns:1fr}}
+.explain div{border-left:3px solid var(--a);padding:8px 12px;background:rgba(255,255,255,.04);border-radius:0 12px 12px 0;font-size:14px}
+.explain b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:2px}
+.big{font-size:34px;font-weight:700}
+.stat{text-align:center}.stat small{color:var(--mut)}
+button.btn{font:inherit;font-weight:600;font-size:14px;border:0;border-radius:12px;padding:10px 16px;cursor:pointer;color:#0a0e1f;background:linear-gradient(90deg,var(--a),var(--b));transition:transform .15s,filter .15s}
+button.btn:hover{transform:translateY(-1px);filter:brightness(1.1)}
+button.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+button.btn.sm{padding:6px 11px;font-size:12px}
+label.f{display:block;font-size:12px;color:var(--mut);margin-bottom:10px}
+label.f span.v{float:right;color:var(--tx);font-family:'JetBrains Mono',monospace}
+input[type=text],input[type=number]{width:100%;font:inherit;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--tx);background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin-top:4px}
+input:focus{outline:2px solid var(--a);outline-offset:1px}
+input[type=range]{width:100%;accent-color:var(--a);margin-top:6px}
+.sw{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;padding:8px 0;user-select:none}
+.sw input{display:none}
+.sw i{width:42px;height:24px;border-radius:99px;background:#3b4166;position:relative;transition:.2s;flex:none}
+.sw i:after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked+i{background:var(--ok)}.sw input:checked+i:after{left:21px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.ok{background:rgba(52,211,153,.18);color:var(--ok)}.bad{background:rgba(251,113,133,.18);color:var(--bad)}.warn{background:rgba(251,191,36,.18);color:var(--warn)}.neu{background:rgba(255,255,255,.1);color:var(--mut)}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.step{flex:1;min-width:130px;cursor:pointer;border:1px solid var(--bd);border-radius:14px;padding:10px;background:var(--card);transition:.2s;font-size:13px}
+.step b{display:flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.12);margin-bottom:6px;font-size:13px}
+.step.on{border-color:var(--a);box-shadow:0 0 0 2px color-mix(in srgb,var(--a) 40%,transparent),0 8px 30px color-mix(in srgb,var(--a) 25%,transparent);transform:translateY(-3px)}
+.step.on b{background:linear-gradient(90deg,var(--a),var(--b));color:#0a0e1f}
+.step.done{opacity:.75}
+.msg{padding:12px 14px;border-radius:12px;background:rgba(0,0,0,.3);border:1px dashed var(--bd);font-size:14px;min-height:48px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.tw{overflow-x:auto}
+details.say{margin-top:14px;border:1px solid var(--bd);border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.04)}
+details.say summary{cursor:pointer;font-weight:600;color:var(--a)}
+details.say p{margin-top:8px;color:var(--mut);font-size:14px}
+code,.code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(0,0,0,.4);border-radius:8px;padding:2px 6px}
+pre.term{font-family:'JetBrains Mono',monospace;font-size:12px;background:#05070f;border:1px solid var(--bd);border-radius:12px;padding:12px;overflow-x:auto;color:#b8f5cf;white-space:pre-wrap}
+.cells{display:grid;grid-template-columns:repeat(32,1fr);gap:2px}
+.cell{aspect-ratio:1;border-radius:3px;background:rgba(255,255,255,.08);transition:background .15s}
+.cell.fast{background:var(--ok);box-shadow:0 0 8px var(--ok)}.cell.slow{background:rgba(251,113,133,.35)}.cell.sel{outline:2px solid #fff}
+.bar{height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--a),var(--b));transition:width .3s}
+.bar.thr:after{content:'';position:absolute;top:0;bottom:0;width:2px;background:#fff;left:var(--t,50%)}
+.pt{border-radius:14px;border:1px solid var(--bd);padding:12px;background:rgba(0,0,0,.25);transition:.3s}
+.pt.act{border-color:var(--a);box-shadow:0 0 0 2px color-mix(in srgb,var(--a) 45%,transparent),0 0 30px color-mix(in srgb,var(--a) 30%,transparent)}
+.pt h4{font-size:14px;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.06);margin-bottom:5px}
+.row.no{background:rgba(251,113,133,.12);color:var(--bad);text-decoration:line-through}
+.row.yes{background:rgba(52,211,153,.14)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{font-size:12px;padding:5px 10px;border-radius:99px;border:1px solid var(--bd);background:rgba(0,0,0,.3)}
+.chip b{color:var(--a);font-family:'JetBrains Mono',monospace}
+.gauge{--p:0;--c:var(--ok);width:130px;height:130px;border-radius:50%;margin:0 auto 8px;background:conic-gradient(var(--c) calc(var(--p)*1%),rgba(255,255,255,.1) 0);display:grid;place-items:center;transition:.4s}
+.gauge div{width:98px;height:98px;border-radius:50%;background:#0d1228;display:grid;place-items:center;font-weight:700;font-size:20px}
+.cmp{display:grid;grid-template-columns:90px 1fr 70px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.sc{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--bd);font-size:13px}
+.sc .st{padding:8px 10px;border-radius:10px;transition:.3s}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 0;font-size:14px}
+.chk input{accent-color:var(--a);width:18px;height:18px;margin-top:2px}
+[contenteditable]{outline:none;border-bottom:1px dashed transparent;border-radius:4px}[contenteditable]:hover,[contenteditable]:focus{border-bottom-color:var(--a);background:rgba(255,255,255,.05)}
+.hint{font-size:12px;color:var(--mut)}
+.note{font-size:12px;color:var(--warn);margin-top:8px}
+.flex{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.foot{margin-top:36px;display:flex;justify-content:space-between;gap:10px}
+.person{display:flex;gap:12px;align-items:center}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#0a0e1f;background:linear-gradient(135deg,var(--a),var(--b));flex:none}
+.big-out{font-family:'JetBrains Mono',monospace;font-size:22px;letter-spacing:.06em;word-break:break-all;color:var(--ok)}
+.reveal{cursor:pointer}.reveal .more{display:none;color:var(--mut);font-size:13px;margin-top:6px}.reveal.open .more{display:block}
+</style>
+</head>
+<body data-theme="home">
+<header class="top">
+  <div class="brand">🛡️ MemShield</div>
+  <nav id="nav">
+    <button data-v="home">Home</button>
+    <button data-v="intro">Introduction</button>
+    <button data-v="overview">Overview</button>
+    <button data-v="module-1">Module 1 · Attacks</button>
+    <button data-v="module-2">Module 2 · KTPT</button>
+    <button data-v="module-3">Module 3 · Evaluation</button>
+    <button data-v="conclusion">Conclusion</button>
+    <button data-v="references">References</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ HOME ============ -->
+<section class="view" id="v-home" data-theme="home">
+  <span class="tag">Capstone Project · Artificial Intelligence · SIMATS Engineering</span>
+  <h1><span class="grad">MemShield</span></h1>
+  <p class="lead" contenteditable="true" style="font-size:19px">Simulation and Evaluation of Paging, Virtual Memory, and Process Memory Isolation</p>
+  <div class="grid g3">
+    <div class="card person"><div class="av">1</div><div><b contenteditable="true">Donapati Saai Vardhan</b><br><span class="hint" contenteditable="true">192525205</span><br><span class="pill neu">Module 1</span></div></div>
+    <div class="card person"><div class="av">2</div><div><b contenteditable="true">Deepak Kumar R</b><br><span class="hint" contenteditable="true">1921260122</span><br><span class="pill neu">Module 2</span></div></div>
+    <div class="card person"><div class="av">3</div><div><b contenteditable="true">Gadde Venkata Chaithanya Kumar</b><br><span class="hint" contenteditable="true">192210029</span><br><span class="pill neu">Module 3</span></div></div>
+  </div>
+  <div class="card sec" style="margin-top:14px">
+    <b>CSA0421 – Operating Systems</b> &nbsp;·&nbsp; Guided by <b contenteditable="true">Dr. Prabaharan</b>
+    <p class="hint" style="margin-top:6px">Tip: names, titles and every number box on this site are editable — click and type.</p>
+  </div>
+  <div class="sec">
+    <h3>How to present this website</h3>
+    <p class="sub">Follow the same order as your PPT. Each page has “What it is / What happens”, a live simulator you can change, and a “What to say” box.</p>
+    <div class="grid g3">
+      <div class="card reveal" data-go="module-1"><h3>① Understand the attacks</h3><p class="hint">Flush+Reload lab, detection monitor</p></div>
+      <div class="card reveal" data-go="module-2"><h3>② Secure design (KTPT)</h3><p class="hint">Page-table switch simulator, attack vs defence</p></div>
+      <div class="card reveal" data-go="module-3"><h3>③ Evaluate</h3><p class="hint">Overhead calculator, measured results, impact</p></div>
+    </div>
+  </div>
+  <div class="foot"><span></span><button class="btn" data-go="intro">Start → Introduction</button></div>
+</section>
+
+<!-- ============ INTRO ============ -->
+<section class="view" id="v-intro" data-theme="home">
+  <span class="tag">Slide 2 · Introduction</span>
+  <h2>Your CPU can <span class="grad">leak secrets</span></h2>
+  <p class="lead">In January 2018, Spectre and Meltdown showed that the speed tricks inside modern CPUs can be abused to read memory that should be off-limits.</p>
+  <div class="grid g3">
+    <div class="card stat"><div class="big grad">Jan 2018</div><b>Spectre &amp; Meltdown</b><br><small>publicly disclosed</small></div>
+    <div class="card stat"><div class="big grad" id="varCount">3</div><b>variants</b><br><small>Spectre V1, Spectre V2, Meltdown</small></div>
+    <div class="card stat"><div class="big grad">Billions</div><b>of devices</b><br><small>PCs, phones, cloud servers</small></div>
+  </div>
+  <div class="explain">
+    <div><b>What it is</b>A family of attacks on <i>speculative execution</i> — the CPU guesses ahead to save time, and the guess can touch secret data.</div>
+    <div><b>What happens</b>The secret is never shown directly; it leaves a tiny trace in the cache which an attacker can measure.</div>
+  </div>
+  <div class="sec">
+    <h3>Where it hurts in real life <span class="hint">(click a card)</span></h3>
+    <div class="grid g4" id="realCards"></div>
+  </div>
+  <details class="say"><summary>What to say</summary><p>“Everyone assumes software bugs cause leaks. Here the hardware itself leaks, because the CPU speculates. That is why billions of devices were affected, and why we need an OS-level design like MemShield.”</p></details>
+  <div class="foot"><button class="btn ghost" data-go="home">← Home</button><button class="btn" data-go="overview">Overview →</button></div>
+</section>
+
+<!-- ============ OVERVIEW ============ -->
+<section class="view" id="v-overview" data-theme="home">
+  <span class="tag">Slide 3 · Project road map</span>
+  <h2>Overview</h2>
+  <div class="card" style="margin:14px 0"><b class="grad">Goal:</b> stop speculative-execution attacks from leaking kernel and cross-process memory, <b>without crippling performance</b>.</div>
+  <div class="grid g3">
+    <div class="card reveal" data-go="module-1" style="border-top:4px solid #ff5a5f"><span class="tag" style="color:#ff5a5f">01</span><h3>Understanding and Detection of Attacks</h3><p class="hint">Saai Vardhan D</p><ul style="margin:10px 0 0 18px;font-size:14px"><li>How the attacks work</li><li>Real attack scenarios and detection</li></ul></div>
+    <div class="card reveal" data-go="module-2" style="border-top:4px solid #22d3ee"><span class="tag" style="color:#22d3ee">02</span><h3>Secure Memory Management Design</h3><p class="hint">Deepak Kumar R</p><ul style="margin:10px 0 0 18px;font-size:14px"><li>KTPT architecture</li><li>Algorithm and threat mapping</li></ul></div>
+    <div class="card reveal" data-go="module-3" style="border-top:4px solid #34d399"><span class="tag" style="color:#34d399">03</span><h3>Implementation and Performance Evaluation</h3><p class="hint">Gadde Venkata Chaithanya Kumar</p><ul style="margin:10px 0 0 18px;font-size:14px"><li>Build and test plan</li><li>Overhead results and real-life impact</li></ul></div>
+  </div>
+  <div class="explain">
+    <div><b>Flow of the project</b>Attack understood → defence designed → defence measured.</div>
+    <div><b>Where MemShield fits</b>Paging and virtual memory are the tools the OS uses to isolate processes; MemShield changes how those page tables are used.</div>
+  </div>
+  <div class="foot"><button class="btn ghost" data-go="intro">← Introduction</button><button class="btn" data-go="module-1">Module 1 →</button></div>
+</section>
+
+<!-- ============ MODULE 1 ============ -->
+<section class="view" id="v-module-1" data-theme="m1">
+  <span class="tag">Module 1 · Saai Vardhan D</span>
+  <h2>Understanding and <span class="grad">Detection of Attacks</span></h2>
+  <p class="lead">How the attacks work, where they hurt, and how to spot them.</p>
+
+  <div class="sec">
+    <h3>A. How the attacks work <span class="hint">(slide 4)</span></h3>
+    <div class="steps" id="atkSteps"></div>
+    <div class="msg" id="atkMsg"></div>
+    <div class="flex" style="margin-top:10px"><button class="btn sm ghost" id="atkPrev">← Prev</button><button class="btn sm" id="atkNext">Next →</button><button class="btn sm ghost" id="atkPlay">▶ Auto-play</button></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Meltdown</h3><p class="hint">Breaks the wall between user programs and the kernel, so an ordinary app may try to read kernel memory.</p></div>
+      <div class="card"><h3>Spectre</h3><p class="hint">Trains the branch predictor to trick a victim program, or another VM, into leaking its own memory.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>B. Live lab: cache timing side-channel (Flush+Reload)</h3>
+    <p class="sub">Type any secret. The “victim” speculatively touches one cache line per byte; the “attacker” times all 256 lines and the fastest one reveals the byte. Change the numbers and re-run.</p>
+    <div class="grid g2">
+      <div class="card">
+        <label class="f">Secret text (max 16 chars)<input type="text" id="fl_secret" value="MemShield" maxlength="16"></label>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+          <label class="f">Cache-hit time (cycles)<input type="number" id="fl_hit" value="40"></label>
+          <label class="f">Cache-miss time (cycles)<input type="number" id="fl_miss" value="200"></label>
+          <label class="f">Timer noise ± (cycles)<input type="number" id="fl_noise" value="15"></label>
+          <label class="f">Detection threshold<input type="number" id="fl_thr" value="120"></label>
+        </div>
+        <label class="sw"><input type="checkbox" id="fl_prot"><i></i>Protection ON (kernel/secret not reachable)</label>
+        <div class="flex"><button class="btn" id="fl_run">▶ Run attack</button><span class="hint" id="fl_gap"></span></div>
+        <p class="note" id="fl_warn"></p>
+      </div>
+      <div class="card">
+        <div class="hint">Probe array — 256 cache lines (hover a cell). Green = fast = was accessed.</div>
+        <div class="cells" id="fl_cells" style="margin:8px 0"></div>
+        <div class="hint mono" id="fl_read">hover a line…</div>
+        <div class="hint" style="margin-top:10px">Recovered by attacker:</div>
+        <div class="big-out" id="fl_out">—</div>
+        <div class="hint" id="fl_acc"></div>
+      </div>
+    </div>
+    <div class="explain"><div><b>What it is</b>Flush all lines → victim reads secret speculatively and touches <code>probe[secret]</code> → attacker times every line.</div><div><b>What happens</b>Hit ≈ fast, miss ≈ slow. If the gap is larger than the noise, the byte is recovered; with protection ON no fast line exists.</div></div>
+  </div>
+
+  <div class="sec">
+    <h3>C. Real attacks and how to spot them <span class="hint">(slide 5)</span></h3>
+    <div class="card tw"><table>
+      <tr><th>Where</th><th>What can go wrong</th></tr>
+      <tr><td><b>Cloud VM</b></td><td>One tenant reads another tenant's keys on the same host</td></tr>
+      <tr><td><b>Web browser</b></td><td>Script probes browser memory, so browsers added site isolation</td></tr>
+      <tr><td><b>Phone or PC app</b></td><td>Malicious app targets passwords and session tokens</td></tr>
+    </table></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card">
+        <h3>Detection monitor (editable)</h3>
+        <p class="hint">Move the sliders or load a scenario. Each signal that crosses its threshold raises the alert.</p>
+        <div class="flex" style="margin:8px 0"><button class="btn sm ghost" data-pre="n">Normal app</button><button class="btn sm ghost" data-pre="s">Spectre-like</button><button class="btn sm ghost" data-pre="m">Meltdown-like</button></div>
+        <label class="f">Cache misses / 1000 instr <span class="v" id="d1v"></span><input type="range" id="d1" min="0" max="100" value="6"></label>
+        <label class="f">Cache flushes / ms <span class="v" id="d2v"></span><input type="range" id="d2" min="0" max="5000" step="50" value="20"></label>
+        <label class="f">Branch mispredict rate % <span class="v" id="d3v"></span><input type="range" id="d3" min="0" max="40" value="2"></label>
+        <div class="hint">Thresholds (editable):</div>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px"><input type="number" id="t1" value="30"><input type="number" id="t2" value="1000"><input type="number" id="t3" value="10"></div>
+      </div>
+      <div class="card">
+        <h3>Live verdict</h3>
+        <div id="dBars"></div>
+        <div style="margin:12px 0"><span class="pill neu" id="dVerdict">—</span> <span class="hint" id="dScore"></span></div>
+        <div class="hint">Detection signals: spikes in cache misses (perf counters) · repeated flush + timed reads · unusual branch-misprediction rate · check OS status:</div>
+        <label class="sw" style="margin-top:6px"><input type="checkbox" id="sysfsOn" checked><i></i>OS mitigations enabled</label>
+        <pre class="term" id="sysfs"></pre>
+        <div class="hint">Command: <code>grep . /sys/devices/system/cpu/vulnerabilities/*</code> (example output)</div>
+      </div>
+    </div>
+  </div>
+  <details class="say"><summary>What to say</summary><p>“The CPU guesses, touches a secret, and the cache remembers. The attacker never reads the secret directly — they measure time. Try the lab: with protection ON nothing is brought into the cache, so every line is slow and the attacker gets nothing. In real life we detect it through cache-miss spikes, repeated flush+reload and abnormal branch misprediction.”</p></details>
+  <div class="foot"><button class="btn ghost" data-go="overview">← Overview</button><button class="btn" data-go="module-2">Module 2 →</button></div>
+</section>
+
+<!-- ============ MODULE 2 ============ -->
+<section class="view" id="v-module-2" data-theme="m2">
+  <span class="tag">Module 2 · Deepak Kumar R</span>
+  <h2>Secure Memory Design: <span class="grad">KTPT</span></h2>
+  <p class="lead">Kernel Table Page-Table split — the kernel is simply not mapped while an app is running.</p>
+
+  <div class="sec">
+    <h3>A. KTPT: split the page tables <span class="hint">(slide 6)</span> + algorithm <span class="hint">(slide 7)</span></h3>
+    <p class="sub">Click a step, or press Next / Auto-play, and watch which page table is active.</p>
+    <div class="steps" id="kSteps"></div>
+    <div class="grid g2">
+      <div>
+        <div class="pt" id="ptU"><h4>🟦 User page table <span class="pill neu" id="ptUs"></span></h4>
+          <div class="row yes"><span>App pages</span><span>mapped</span></div>
+          <div class="row yes"><span>Tiny entry stub</span><span>mapped</span></div>
+          <div class="row no"><span>Kernel memory</span><span>NOT mapped</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="pt" id="ptK"><h4>🟧 Kernel page table <span class="pill neu" id="ptKs"></span></h4>
+          <div class="row yes"><span>Full kernel</span><span>mapped</span></div>
+          <div class="row yes"><span>User pages</span><span>mapped</span></div>
+          <div class="row yes"><span>Entry stub</span><span>mapped</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="chips" id="kChips"></div>
+    <div class="msg" id="kMsg"></div>
+    <div class="flex" style="margin-top:10px"><button class="btn sm ghost" id="kPrev">← Prev</button><button class="btn sm" id="kNext">Next →</button><button class="btn sm ghost" id="kPlay">▶ Auto-play</button>
+      <label class="sw" style="margin:0 0 0 10px"><input type="checkbox" id="kPcid" checked><i></i>Tagged TLB (PCID)</label>
+      <label class="f" style="margin:0 0 0 6px;width:150px">TLB entries<input type="number" id="kTlb" value="64"></label>
+    </div>
+    <div class="hint" style="margin-top:6px">Each syscall = 2 table switches. Without PCID, every switch flushes the whole TLB; with PCID nothing is flushed.</div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card"><b>Tagged TLB (PCID)</b><p class="hint">Avoids a full flush on every switch.</p></div>
+      <div class="card"><b>Minimal stub</b><p class="hint">Only the entry code is shared between tables.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>B. Threat mapping — attack vs defence lab</h3>
+    <p class="sub">Switch each defence on or off, edit the values, and fire the attacks. This is the same table as slide 7, but live.</p>
+    <div class="grid g3">
+      <div class="card">
+        <h3 style="color:#ff9f43">Meltdown</h3>
+        <label class="sw"><input type="checkbox" id="dMel" checked><i></i>KTPT: kernel unmapped in user table</label>
+        <label class="f">Kernel address<input type="text" id="mAddr" value="0xffffffff81000000"></label>
+        <label class="f">Kernel secret byte (0–255)<input type="number" id="mSec" value="77"></label>
+        <button class="btn sm" id="mGo">Attack</button>
+        <div class="msg" id="mOut" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h3 style="color:#ff9f43">Spectre V1</h3>
+        <label class="sw"><input type="checkbox" id="dV1" checked><i></i>Index masking + fences</label>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px">
+          <label class="f">array1 size N<input type="number" id="v1N" value="16"></label>
+          <label class="f">Secret offset<input type="number" id="v1D" value="4096"></label>
+        </div>
+        <label class="f">Attacker index x<input type="number" id="v1x" value="4096"></label>
+        <button class="btn sm" id="v1Go">Attack</button>
+        <div class="msg" id="v1Out" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h3 style="color:#ff9f43">Spectre V2</h3>
+        <label class="sw"><input type="checkbox" id="dV2" checked><i></i>Predictor flush + safe indirect calls</label>
+        <label class="f">Legit target<input type="text" id="v2L" value="0x401000"></label>
+        <label class="f">Attacker-trained gadget<input type="text" id="v2G" value="0x401a30"></label>
+        <button class="btn sm" id="v2Go">Attack</button>
+        <div class="msg" id="v2Out" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <div class="card tw" style="margin-top:14px"><table>
+      <tr><th>Threat</th><th>KTPT defence</th><th>Live status</th></tr>
+      <tr><td><b>Meltdown</b></td><td>Kernel unmapped in the user table</td><td id="sMel"><span class="pill neu">not tried</span></td></tr>
+      <tr><td><b>Spectre V1</b></td><td>Index masking and fences at risky branches</td><td id="sV1"><span class="pill neu">not tried</span></td></tr>
+      <tr><td><b>Spectre V2</b></td><td>Predictor flush and safe indirect calls</td><td id="sV2"><span class="pill neu">not tried</span></td></tr>
+    </table>
+    <div style="margin-top:10px"><b class="grad">Result: one design covers all three variants.</b> <span class="hint" id="sSum"></span></div></div>
+  </div>
+  <details class="say"><summary>What to say</summary><p>“While an app runs, the kernel is not in its page table at all, so Meltdown finds nothing to read. On every syscall we switch to the kernel table using a tagged TLB so we don’t pay a full flush. Inside the kernel we mask array indexes and fence risky branches for Spectre V1, and flush the predictor on return for Spectre V2. Turn a switch off here and you see the attack succeed.”</p></details>
+  <div class="foot"><button class="btn ghost" data-go="module-1">← Module 1</button><button class="btn" data-go="module-3">Module 3 →</button></div>
+</section>
+
+<!-- ============ MODULE 3 ============ -->
+<section class="view" id="v-module-3" data-theme="m3">
+  <span class="tag">Module 3 · Gadde Venkata Chaithanya Kumar</span>
+  <h2>Implementation and <span class="grad">Performance Evaluation</span></h2>
+  <p class="lead">Build it, test that leaks fail, then measure the cost.</p>
+
+  <div class="sec">
+    <h3>A. Implementation plan <span class="hint">(slide 8)</span></h3>
+    <p class="sub">Tick each phase as you explain it — progress updates live.</p>
+    <div class="bar" style="margin-bottom:12px"><i id="planBar" style="width:0"></i></div>
+    <div class="grid g2">
+      <div class="card" id="planList"></div>
+      <div class="card">
+        <h3>Tools and checks</h3>
+        <table><tr><td><code>perf</code></td><td>cache and branch counters</td></tr><tr><td><code>lmbench</code></td><td>syscall latency</td></tr><tr><td><code>sysbench</code></td><td>CPU and memory load</td></tr><tr><td><code>sysfs</code></td><td>vulnerabilities status</td></tr></table>
+        <p class="note">Safety: run tests only on your own isolated VM.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>B. Performance calculator — real-time overhead model <span class="hint">(slide 9)</span></h3>
+    <p class="sub">Overhead = syscalls per second × extra cost per syscall. Pick a workload, edit the costs, watch the result.</p>
+    <div class="grid g2">
+      <div class="card">
+        <div class="flex" style="margin-bottom:8px"><button class="btn sm ghost" data-wl="5000">CPU-bound</button><button class="btn sm ghost" data-wl="120000">Web server</button><button class="btn sm ghost" data-wl="400000">Database / I/O</button><button class="btn sm ghost" data-wl="2000000">Syscall micro-benchmark</button></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+          <label class="f">Baseline runtime (s)<input type="number" id="p_rt" value="100"></label>
+          <label class="f">Syscalls per second<input type="number" id="p_sc" value="120000"></label>
+          <label class="f">Baseline syscall latency (ns)<input type="number" id="p_lat" value="100"></label>
+          <label class="f">CR3 switch cost (ns, ×2)<input type="number" id="p_cr3" value="80"></label>
+          <label class="f">TLB refill if no PCID (ns)<input type="number" id="p_tlb" value="350"></label>
+          <label class="f">Mask + fence (ns)<input type="number" id="p_mask" value="8"></label>
+          <label class="f">Predictor flush (ns)<input type="number" id="p_flush" value="50"></label>
+        </div>
+        <label class="sw"><input type="checkbox" id="p_pcid" checked><i></i>PCID tagging enabled</label>
+        <p class="note">Illustrative model values. Replace with what you measure on your VM.</p>
+      </div>
+      <div class="card">
+        <div class="chips"><span class="chip">Extra per syscall <b id="o_extra"></b></span><span class="chip">Overhead <b id="o_pct"></b></span></div>
+        <div class="cmp"><span>Baseline</span><div class="bar"><i id="b_base"></i></div><b id="t_base" class="mono"></b></div>
+        <div class="cmp"><span>With KTPT</span><div class="bar"><i id="b_ktpt"></i></div><b id="t_ktpt" class="mono"></b></div>
+        <div class="cmp"><span>Latency base</span><div class="bar"><i id="l_base"></i></div><b id="tl_base" class="mono"></b></div>
+        <div class="cmp"><span>Latency KTPT</span><div class="bar"><i id="l_ktpt"></i></div><b id="tl_ktpt" class="mono"></b></div>
+        <hr style="border:0;border-top:1px solid var(--bd);margin:12px 0">
+        <b>Why PCID matters (same workload)</b>
+        <div class="cmp"><span>With PCID</span><div class="bar"><i id="c_on"></i></div><b id="tc_on" class="mono"></b></div>
+        <div class="cmp"><span>No PCID</span><div class="bar"><i id="c_off"></i></div><b id="tc_off" class="mono"></b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>C. Your measured results <span class="hint">(slide 9 gauges)</span></h3>
+    <p class="sub">Type your real numbers after running the tests — the three gauges calculate themselves.</p>
+    <div class="grid g2">
+      <div class="card">
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+          <label class="f">Leak tests run<input type="number" id="r_n" value="12"></label>
+          <label class="f">Leak tests blocked<input type="number" id="r_b" value="12"></label>
+          <label class="f">Runtime baseline (s)<input type="number" id="r_r0" value="100"></label>
+          <label class="f">Runtime with KTPT (s)<input type="number" id="r_r1" value="104.4"></label>
+          <label class="f">Syscall latency base (µs)<input type="number" id="r_l0" step="0.01" value="0.11"></label>
+          <label class="f">Syscall latency KTPT (µs)<input type="number" id="r_l1" step="0.01" value="0.30"></label>
+        </div>
+        <p class="note">Pre-filled values are illustrative targets — replace with your measured results.</p>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
+        <div class="card stat"><div class="gauge" id="g1"><div id="g1v"></div></div><b>Security</b><br><small>Leak tests blocked</small></div>
+        <div class="card stat"><div class="gauge" id="g2"><div id="g2v"></div></div><b>Overhead</b><br><small>Runtime vs baseline</small></div>
+        <div class="card stat"><div class="gauge" id="g3"><div id="g3v"></div></div><b>Latency</b><br><small>Cost per system call</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>D. Before vs after: real-life impact <span class="hint">(slide 10)</span></h3>
+    <label class="sw"><input type="checkbox" id="impTog"><i></i><b id="impLbl">Protection OFF</b></label>
+    <div class="card" id="impBox"></div>
+    <p class="hint" style="margin-top:8px"><b class="grad">Goal:</b> strong isolation with low, workload-dependent overhead.</p>
+  </div>
+  <details class="say"><summary>What to say</summary><p>“We set up a Linux VM, record a baseline, add the table switch and mitigations, confirm leak tests fail inside an isolated VM, then compare runtime and syscall latency. Overhead depends on the workload: a CPU-bound program barely notices, a syscall-heavy one pays more — and PCID tagging keeps that cost manageable. Toggle PCID in the calculator to see the difference.”</p></details>
+  <div class="foot"><button class="btn ghost" data-go="module-2">← Module 2</button><button class="btn" data-go="conclusion">Conclusion →</button></div>
+</section>
+
+<!-- ============ CONCLUSION ============ -->
+<section class="view" id="v-conclusion" data-theme="end">
+  <span class="tag">Slide 11</span>
+  <h2>Conclusion and <span class="grad">future scope</span></h2>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Key takeaways</h3>
+      <div class="chk" style="cursor:default">✅ Spectre and Meltdown abuse speculation, not coding bugs</div>
+      <div class="chk" style="cursor:default">✅ KTPT hides the kernel by splitting page tables</div>
+      <div class="chk" style="cursor:default">✅ Masking, fences and predictor flushes cover Spectre</div>
+      <div class="chk" style="cursor:default">✅ Overhead stays manageable with PCID tagging</div>
+    </div>
+    <div class="card"><h3>Future scope</h3>
+      <div class="chk" style="cursor:default">🔹 Hardware-level fixes in newer CPUs</div>
+      <div class="chk" style="cursor:default">🔹 ML-based real-time attack detection</div>
+      <div class="chk" style="cursor:default">🔹 Testing on ARM, RISC-V and containers</div>
+    </div>
+  </div>
+  <div class="foot"><button class="btn ghost" data-go="module-3">← Module 3</button><button class="btn" data-go="references">References →</button></div>
+</section>
+
+<!-- ============ REFERENCES ============ -->
+<section class="view" id="v-references" data-theme="end">
+  <span class="tag">Slide 12</span>
+  <h2>References</h2>
+  <div class="card" style="margin-top:14px"><ol style="margin-left:20px;font-size:15px;display:grid;gap:8px">
+    <li>Kocher et al., <i>Spectre Attacks: Exploiting Speculative Execution</i>, IEEE S&amp;P 2019 (foundational)</li>
+    <li>Lipp et al., <i>Meltdown: Reading Kernel Memory from User Space</i>, USENIX Security 2018 (foundational)</li>
+    <li>Linux Kernel Documentation, Page Table Isolation (PTI), kernel.org</li>
+    <li><i>GhostRace: Exploiting and Mitigating Speculative Race Conditions</i>, USENIX Security 2024</li>
+    <li><i>Indirector: Branch Target Injection via the Indirect Branch Predictor</i>, USENIX Security 2024</li>
+    <li><i>InSpectre Gadget: Residual Attack Surface of Cross-privilege Spectre v2</i>, USENIX Security 2024</li>
+  </ol>
+  <p class="note">Verify titles and authors against the original papers before submitting.</p></div>
+  <div class="foot"><button class="btn ghost" data-go="conclusion">← Conclusion</button><button class="btn" data-go="home">Back to start ↺</button></div>
+</section>
+
+</main>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const num=id=>{const v=parseFloat($('#'+id).value);return isNaN(v)?0:v};
+const fmt=(n,d=1)=>Number(n).toLocaleString('en-IN',{maximumFractionDigits:d});
+
+/* ---------- router ---------- */
+const views=['home','intro','overview','module-1','module-2','module-3','conclusion','references'];
+function go(v){
+  if(!views.includes(v))v='home';
+  $$('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.body.dataset.theme=$('#v-'+v).dataset.theme;
+  window.scrollTo({top:0});
+  try{if(location.hash!=='#'+v)location.hash=v}catch(e){}
+}
+$$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');
+  if(g){go(g.dataset.go);return}
+  const r=e.target.closest('.reveal:not([data-go])');
+  if(r)r.classList.toggle('open');
+});
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)));
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName)||e.target.isContentEditable)return;
+  const i=views.findIndex(v=>$('#v-'+v).classList.contains('on'));
+  if(e.key==='ArrowRight'&&i<views.length-1)go(views[i+1]);
+  if(e.key==='ArrowLeft'&&i>0)go(views[i-1]);
+});
+
+/* ---------- intro cards ---------- */
+const real=[
+ ['☁️','Cloud servers','A rented VM could read a neighbour\'s data','Many tenants share one physical CPU and cache, so a leak crosses customers.'],
+ ['🌐','Web browsers','A web page script may probe other tabs','Scripts run inside the browser process, so browsers added site isolation.'],
+ ['🏦','Banking and UPI apps','A rogue app could sniff keys and tokens','Another app on the phone shares the same CPU and can time cache accesses.'],
+ ['🏥','Hospital systems','Patient records on shared servers at risk','Shared servers hold many departments\' data, so isolation failures expose records.']];
+$('#realCards').innerHTML=real.map(r=>`<div class="card reveal"><div style="font-size:28px">${r[0]}</div><h3>${r[1]}</h3><p class="hint">${r[2]}</p><div class="more">${r[3]}</div></div>`).join('');
+
+/* ---------- module 1: attack steps ---------- */
+const atk=[
+ ['CPU speculates','Guesses a branch to save time','The CPU does not wait for a branch result; it guesses and starts running ahead.'],
+ ['Reads a secret','Touches data it should not access','On the wrong path it reads memory it has no permission to read. The result is thrown away later.'],
+ ['Leaves a trace','The secret changes what sits in cache','Even though the result is discarded, the cache line for probe[secret] is now loaded.'],
+ ['Timing reveals it','Attacker times fast vs slow access','The attacker times each line: the fast one is the secret. See the live lab below.']];
+let aI=0,aT=null;
+$('#atkSteps').innerHTML=atk.map((a,i)=>`<div class="step" data-i="${i}"><b>${i+1}</b><strong>${a[0]}</strong><br><span class="hint">${a[1]}</span></div>`).join('');
+function atkShow(){$$('#atkSteps .step').forEach((s,i)=>{s.classList.toggle('on',i===aI);s.classList.toggle('done',i<aI)});$('#atkMsg').innerHTML=`<b>Step ${aI+1}: ${atk[aI][0]}.</b> ${atk[aI][2]}`}
+$$('#atkSteps .step').forEach(s=>s.onclick=()=>{aI=+s.dataset.i;atkShow()});
+$('#atkNext').onclick=()=>{aI=(aI+1)%4;atkShow()};$('#atkPrev').onclick=()=>{aI=(aI+3)%4;atkShow()};
+$('#atkPlay').onclick=function(){if(aT){clearInterval(aT);aT=null;this.textContent='▶ Auto-play'}else{aT=setInterval(()=>{aI=(aI+1)%4;atkShow()},1800);this.textContent='⏸ Pause'}};
+atkShow();
+
+/* ---------- module 1: flush+reload ---------- */
+const cells=$('#fl_cells');
+cells.innerHTML=Array.from({length:256},(_,i)=>`<div class="cell" data-i="${i}"></div>`).join('');
+let flTimes=new Array(256).fill(null),flRun=null;
+cells.addEventListener('mouseover',e=>{const c=e.target.closest('.cell');if(!c)return;const i=+c.dataset.i,t=flTimes[i];$('#fl_read').textContent=`line 0x${i.toString(16).padStart(2,'0')} ('${i>31&&i<127?String.fromCharCode(i):'·'}')  `+(t==null?'not timed yet':Math.round(t)+' cycles')});
+function flInfo(){
+  const hit=num('fl_hit'),miss=num('fl_miss'),n=num('fl_noise'),thr=num('fl_thr');
+  $('#fl_gap').textContent=`gap = ${miss-hit} cycles`;
+  const w=[];
+  if(miss<=hit)w.push('Miss time must be larger than hit time.');
+  if(n*2>=miss-hit)w.push('Noise is large compared with the gap — expect errors.');
+  if(thr<=hit+n)w.push('Threshold is too low — real hits may be missed.');
+  if(thr>=miss-n)w.push('Threshold is too high — misses may look like hits.');
+  $('#fl_warn').textContent=w.join(' ');
+}
+function flByte(sec,prot){
+  const hit=num('fl_hit'),miss=num('fl_miss'),n=num('fl_noise'),thr=num('fl_thr');
+  const jit=()=>(Math.random()*2-1)*n;
+  flTimes=Array.from({length:256},(_,i)=>(i===sec&&!prot?hit:miss)+jit());
+  let best=-1,bt=Infinity;
+  flTimes.forEach((t,i)=>{if(t<thr&&t<bt){bt=t;best=i}});
+  cells.querySelectorAll('.cell').forEach((c,i)=>{c.className='cell '+(flTimes[i]<thr?'fast':'slow')});
+  return best;
+}
+$('#fl_run').onclick=()=>{
+  if(flRun)clearInterval(flRun);
+  const s=$('#fl_secret').value.slice(0,16),prot=$('#fl_prot').checked;
+  let i=0,out='',ok=0;$('#fl_out').textContent='…';
+  if(!s){$('#fl_out').textContent='(empty secret)';return}
+  flRun=setInterval(()=>{
+    const b=s.charCodeAt(i)&255,r=flByte(b,prot);
+    cells.querySelectorAll('.cell')[b].classList.add('sel');
+    if(r===b)ok++;
+    out+=r<0?'?':(r>31&&r<127?String.fromCharCode(r):'·');
+    $('#fl_out').textContent=out;
+    i++;
+    if(i>=s.length){clearInterval(flRun);flRun=null;$('#fl_acc').textContent=`Recovered ${ok} of ${s.length} bytes correctly (${fmt(ok/s.length*100,0)}%).`+(prot?' Protection ON: nothing leaked.':'')}
+  },350);
+};
+$$('#fl_hit,#fl_miss,#fl_noise,#fl_thr').forEach(i=>i.oninput=flInfo);flInfo();
+
+/* ---------- module 1: detection ---------- */
+const pre={n:[6,20,2],s:[45,2400,18],m:[70,300,9]};
+$$('[data-pre]').forEach(b=>b.onclick=()=>{const p=pre[b.dataset.pre];$('#d1').value=p[0];$('#d2').value=p[1];$('#d3').value=p[2];det()});
+function det(){
+  const v=[num('d1'),num('d2'),num('d3')],t=[num('t1'),num('t2'),num('t3')],mx=[100,5000,40],nm=['Cache misses / 1k instr','Cache flushes / ms','Branch mispredict %'];
+  $('#d1v').textContent=v[0];$('#d2v').textContent=v[1];$('#d3v').textContent=v[2]+'%';
+  let hits=0;
+  $('#dBars').innerHTML=v.map((x,i)=>{const over=x>=t[i];if(over)hits++;return `<div style="margin-bottom:10px"><div class="hint" style="display:flex;justify-content:space-between"><span>${nm[i]}</span><span>${x} / threshold ${t[i]} ${over?'⚠️':''}</span></div><div class="bar thr" style="--t:${Math.min(100,t[i]/mx[i]*100)}%"><i style="width:${Math.min(100,x/mx[i]*100)}%;${over?'background:var(--bad)':''}"></i></div></div>`}).join('');
+  const lab=['Normal','Watch','Suspicious','Likely attack'],cls=['ok','warn','bad','bad'];
+  $('#dVerdict').className='pill '+cls[hits];$('#dVerdict').textContent=lab[hits];
+  $('#dScore').textContent=`${hits} of 3 signals over threshold`;
+}
+$$('#d1,#d2,#d3,#t1,#t2,#t3').forEach(i=>i.oninput=det);det();
+function sysfs(){
+  const on=$('#sysfsOn').checked;
+  $('#sysfs').textContent=on?
+`meltdown: Mitigation: PTI
+spectre_v1: Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+spectre_v2: Mitigation: Retpolines; IBPB: conditional; IBRS_FW; STIBP: conditional; RSB filling`:
+`meltdown: Vulnerable
+spectre_v1: Vulnerable
+spectre_v2: Vulnerable`;
+  $('#sysfs').style.color=on?'#b8f5cf':'#fda4af';
+}
+$('#sysfsOn').onchange=sysfs;sysfs();
+
+/* ---------- module 2: KTPT simulator ---------- */
+const ks=[
+ {t:'App runs with the user table; kernel is unmapped',m:'User',cr3:'user',pcid:1,k:false,sw:0,pred:'normal',d:'The app runs with the user page table. The kernel is not mapped, so an attacker running here finds nothing to read.'},
+ {t:'Syscall or interrupt enters through the tiny stub',m:'Entering',cr3:'user',pcid:1,k:false,sw:0,pred:'normal',d:'A syscall or interrupt happens. Only the tiny entry stub is visible in both tables, so the CPU can get in.'},
+ {t:'Switch to the kernel table (PCID tagged)',m:'Kernel',cr3:'kernel',pcid:0,k:true,sw:1,pred:'normal',d:'CR3 is loaded with the kernel table. PCID tags mean the TLB does not need a full flush. Kernel and user pages are now mapped.'},
+ {t:'Mask array indexes and fence risky branches',m:'Kernel',cr3:'kernel',pcid:0,k:true,sw:0,pred:'fenced',d:'Kernel code masks array indexes and puts fences at risky branches, so Spectre V1 gadgets cannot read out of bounds speculatively.'},
+ {t:'On return, switch back and clear predictor state',m:'User',cr3:'user',pcid:1,k:false,sw:1,pred:'flushed',d:'Return to user: CR3 goes back to the user table and predictor state is cleared so the attacker cannot steer the next indirect branch (Spectre V2).'}];
+let kI=0,kT=null,kSw=0,kFl=0;
+$('#kSteps').innerHTML=ks.map((s,i)=>`<div class="step" data-i="${i}"><b>${i+1}</b>${s.t}</div>`).join('');
+function kShow(){
+  const s=ks[kI];
+  $$('#kSteps .step').forEach((e,i)=>{e.classList.toggle('on',i===kI);e.classList.toggle('done',i<kI)});
+  $('#ptU').classList.toggle('act',s.cr3==='user');$('#ptK').classList.toggle('act',s.cr3==='kernel');
+  $('#ptUs').textContent=s.cr3==='user'?'ACTIVE (CR3)':'idle';$('#ptKs').textContent=s.cr3==='kernel'?'ACTIVE (CR3)':'idle';
+  $('#ptUs').className='pill '+(s.cr3==='user'?'ok':'neu');$('#ptKs').className='pill '+(s.cr3==='kernel'?'ok':'neu');
+  const pc=$('#kPcid').checked,tlb=num('kTlb');
+  $('#kChips').innerHTML=`<span class="chip">Mode <b>${s.m}</b></span><span class="chip">CR3 <b>${s.cr3} table</b></span><span class="chip">Kernel mapped <b>${s.k?'yes':'no'}</b></span><span class="chip">Predictor <b>${s.pred}</b></span><span class="chip">Table switches <b>${kSw}</b></span><span class="chip">TLB entries flushed <b>${fmt(kFl,0)}</b></span>`;
+  $('#kMsg').innerHTML=`<b>Step ${kI+1}.</b> ${s.d}`;
+}
+function kStep(d){
+  kI=(kI+d+5)%5;const s=ks[kI];
+  if(d>0&&s.sw){kSw++;if(!$('#kPcid').checked)kFl+=num('kTlb')}
+  kShow();
+}
+$$('#kSteps .step').forEach(e=>e.onclick=()=>{kI=+e.dataset.i;kShow()});
+$('#kNext').onclick=()=>kStep(1);$('#kPrev').onclick=()=>kStep(-1);
+$('#kPlay').onclick=function(){if(kT){clearInterval(kT);kT=null;this.textContent='▶ Auto-play'}else{kT=setInterval(()=>kStep(1),1800);this.textContent='⏸ Pause'}};
+$('#kPcid').onchange=()=>{kSw=0;kFl=0;kShow()};$('#kTlb').oninput=kShow;kShow();
+
+/* ---------- module 2: attack vs defence ---------- */
+const st={mel:null,v1:null,v2:null};
+const pill=(ok,t)=>`<span class="pill ${ok?'ok':'bad'}">${t}</span>`;
+function summary(){
+  const set=(id,k,okT,badT)=>{$(id).innerHTML=st[k]===null?'<span class="pill neu">not tried</span>':pill(st[k],st[k]?okT:badT)};
+  set('#sMel','mel','Blocked','LEAKED');set('#sV1','v1','Blocked','LEAKED');set('#sV2','v2','Blocked','LEAKED');
+  const tried=Object.values(st).filter(v=>v!==null),b=tried.filter(v=>v).length;
+  $('#sSum').textContent=tried.length?`${b} of ${tried.length} attacks tried so far were blocked.`:'';
+}
+const hex=s=>{const v=parseInt(s,16);return isNaN(v)?0:v};
+$('#mGo').onclick=()=>{
+  const prot=$('#dMel').checked,sec=num('mSec')&255,a=$('#mAddr').value;
+  st.mel=prot;
+  $('#mOut').innerHTML=prot?`User table lookup for <code>${a}</code>: <b>NOT MAPPED</b> → no data is forwarded, cache stays unchanged. ${pill(true,'Blocked')}`:`User table still maps <code>${a}</code> (supervisor-only). The permission check is late, so the load runs transiently and caches probe[${sec}]. Attacker recovers <b>${sec}</b> ('${sec>31&&sec<127?String.fromCharCode(sec):'·'}'). ${pill(false,'LEAKED')}`;
+  summary();
+};
+$('#v1Go').onclick=()=>{
+  const prot=$('#dV1').checked,N=num('v1N'),D=num('v1D'),x=num('v1x');
+  const eff=prot?(x<N?x:0):x,reach=eff===D&&D>=N;
+  st.v1=!reach;
+  $('#v1Out').innerHTML=(prot?`Masked index: <code>(x &lt; N) ? x : 0</code> = ${x} &lt; ${N}? → <b>${eff}</b>. `:`No masking: speculative read uses <b>${eff}</b>. `)+`Secret sits at offset ${D}. `+(reach?`array1[${eff}] hits the secret. ${pill(false,'LEAKED')}`:`array1[${eff}] stays inside the array / misses the secret. ${pill(true,'Blocked')}`);
+  summary();
+};
+$('#v2Go').onclick=()=>{
+  const prot=$('#dV2').checked,L=$('#v2L').value,G=$('#v2G').value;
+  const pred=prot?L:G,bad=pred===G&&G!==L;
+  st.v2=!bad;
+  $('#v2Out').innerHTML=prot?`Predictor state cleared, safe indirect call used. CPU predicts <code>${L}</code> (legit). ${pill(true,'Blocked')}`:`Attacker trained the predictor. CPU speculatively jumps to gadget <code>${G}</code> and leaks via cache. ${pill(false,'LEAKED')}`;
+  summary();
+};
+summary();
+
+/* ---------- module 3: plan ---------- */
+const plan=[
+ ['Setup','Linux VM on a test machine; record the baseline','grep . /sys/devices/system/cpu/vulnerabilities/*'],
+ ['Build','Add the table switch and mitigations in the kernel','Kernel patch: split page tables + masks/fences'],
+ ['Test','Confirm leak tests fail, inside an isolated VM only','perf stat -e cache-misses,branch-misses ./leak_test'],
+ ['Measure','Compare runtime and latency against the baseline','lat_syscall null (lmbench) · sysbench cpu run']];
+$('#planList').innerHTML=plan.map((p,i)=>`<label class="chk"><input type="checkbox" class="pc"><span><b>${i+1}. ${p[0]}</b> — ${p[1]}<br><code>${p[2]}</code></span></label>`).join('');
+$$('.pc').forEach(c=>c.onchange=()=>{$('#planBar').style.width=($$('.pc:checked').length/plan.length*100)+'%'});
+
+/* ---------- module 3: calculator ---------- */
+function extra(pc){return 2*num('p_cr3')+(pc?0:num('p_tlb'))+num('p_mask')+num('p_flush')}
+function calc(){
+  const pc=$('#p_pcid').checked,rt=num('p_rt'),sc=num('p_sc'),lat=num('p_lat');
+  const ex=extra(pc),ov=sc*ex/1e9,rt2=rt*(1+ov);
+  const ovOn=sc*extra(true)/1e9*100,ovOff=sc*extra(false)/1e9*100;
+  $('#o_extra').textContent='+'+fmt(ex,0)+' ns';$('#o_pct').textContent='+'+fmt(ov*100,2)+'%';
+  const mx=Math.max(rt2,1e-9);
+  $('#b_base').style.width=(rt/mx*100)+'%';$('#t_base').textContent=fmt(rt,1)+' s';
+  $('#b_ktpt').style.width='100%';$('#t_ktpt').textContent=fmt(rt2,1)+' s';
+  const lm=lat+ex;
+  $('#l_base').style.width=(lat/lm*100)+'%';$('#tl_base').textContent=fmt(lat,0)+' ns';
+  $('#l_ktpt').style.width='100%';$('#tl_ktpt').textContent=fmt(lm,0)+' ns';
+  const cm=Math.max(ovOn,ovOff,1e-9);
+  $('#c_on').style.width=(ovOn/cm*100)+'%';$('#tc_on').textContent='+'+fmt(ovOn,2)+'%';
+  $('#c_off').style.width=(ovOff/cm*100)+'%';$('#tc_off').textContent='+'+fmt(ovOff,2)+'%';
+}
+$$('#v-module-3 input[id^=p_]').forEach(i=>i.oninput=calc);$('#p_pcid').onchange=calc;
+$$('[data-wl]').forEach(b=>b.onclick=()=>{$('#p_sc').value=b.dataset.wl;calc()});calc();
+
+/* ---------- module 3: gauges ---------- */
+function gauges(){
+  const n=num('r_n'),b=num('r_b'),r0=num('r_r0'),r1=num('r_r1'),l0=num('r_l0'),l1=num('r_l1');
+  const sec=n?Math.min(100,b/n*100):0,ov=r0?(r1-r0)/r0*100:0,la=l0?(l1-l0)/l0*100:0;
+  const set=(g,p,txt,c)=>{$('#'+g).style.setProperty('--p',Math.max(0,Math.min(100,p)));$('#'+g).style.setProperty('--c',c);$('#'+g+'v').textContent=txt};
+  set('g1',sec,fmt(sec,0)+'%',sec>=100?'#34d399':sec>=75?'#fbbf24':'#fb7185');
+  set('g2',ov*4,(ov>=0?'+':'')+fmt(ov,1)+'%',ov<10?'#34d399':ov<25?'#fbbf24':'#fb7185');
+  set('g3',la/3,(la>=0?'+':'')+fmt(la,0)+'%',la<150?'#34d399':la<300?'#fbbf24':'#fb7185');
+}
+$$('#v-module-3 input[id^=r_]').forEach(i=>i.oninput=gauges);gauges();
+
+/* ---------- module 3: impact ---------- */
+const imp=[['Cloud hosting','Neighbour VM can read secrets','Kernel and tenants stay isolated'],['Web browsing','Script may probe other tabs','Speculative reads find nothing to leak'],['Mobile banking','Keys and tokens exposed to rogue apps','Sensitive memory not reachable'],['Hospital records','Shared server data at risk','Patient data protected by isolation']];
+function impact(){
+  const on=$('#impTog').checked;
+  $('#impLbl').textContent=on?'Protection ON (with KTPT)':'Protection OFF (without protection)';
+  $('#impBox').innerHTML=imp.map(r=>`<div class="sc" style="grid-template-columns:1fr 2fr"><b>${r[0]}</b><div class="st" style="background:${on?'rgba(52,211,153,.15)':'rgba(251,113,133,.15)'};color:${on?'var(--ok)':'var(--bad)'}">${on?'🛡️ '+r[2]:'⚠️ '+r[1]}</div></div>`).join('');
+}
+$('#impTog').onchange=impact;impact();
+
+/* ---------- start ---------- */
+go(location.hash.slice(1)||'home');
+</script>
+</body>
+</html>
