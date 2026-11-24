@@ -1,0 +1,46 @@
+=== Part 1: queue 98 183 37 122 14 124 65 67, head at 53, cylinders 0-199 ===
+FCFS    53 98 183 37 122 14 124 65 67  -> 640 cylinders
+SSTF    53 65 67 37 14 98 122 124 183  -> 236 cylinders
+SCAN    53 37 14 0 65 67 98 122 124 183  -> 236 cylinders
+C-SCAN  53 65 67 98 122 124 183 199 0 14 37  -> 183 cylinders (+199 for the return jump = 382)
+LOOK    53 37 14 65 67 98 122 124 183  -> 208 cylinders
+C-LOOK  53 65 67 98 122 124 183 14 37  -> 153 cylinders (+169 for the return jump = 322)
+
+=== Part 2: 10,000 random requests (uniform cylinders), Poisson arrivals ===
+model: seek = 2 ms + 0.1 ms/cylinder, rotation 4 ms, transfer 0.5 ms (mean random service about 11.5 ms)
+
+light  (mean inter-arrival 40 ms)
+algorithm   avg head movement (cyl/request)   avg wait (ms)   p99 wait (ms)   max wait (ms)   disk busy
+FCFS                       67.0                      3.6            32.9            75.3         33%
+SSTF                       65.3                      3.2            31.1            75.6         33%
+SCAN                      111.6                     11.1            49.0            73.9         47%
+C-SCAN                    149.1                     24.1            65.7            91.2         57%
+LOOK                       65.4                      3.2            30.9            67.8         33%
+C-LOOK                     66.6                      7.8            40.9            82.6         33%
+
+medium (mean inter-arrival 14 ms)
+algorithm   avg head movement (cyl/request)   avg wait (ms)   p99 wait (ms)   max wait (ms)   disk busy
+FCFS                       66.9                    133.1           606.7           736.6         95%
+SSTF                       49.5                     16.8            96.2           199.3         82%
+SCAN                       58.1                     28.1           102.5           191.6         92%
+C-SCAN                     63.3                     43.7           119.7           179.6         96%
+LOOK                       49.9                     17.5            80.5           159.9         83%
+C-LOOK                     53.5                     25.6            96.6           173.8         85%
+
+heavy  (mean inter-arrival 11 ms)
+algorithm   avg head movement (cyl/request)   avg wait (ms)   p99 wait (ms)   max wait (ms)   disk busy
+FCFS                       66.7                  10724.3         20954.9         21188.6        100%
+SSTF                       38.3                     27.3           142.2           350.2         93%
+SCAN                       39.7                     38.3           137.5           257.7         98%
+C-SCAN                     41.4                     56.8           160.5           251.7         99%
+LOOK                       38.6                     28.0           119.3           220.6         93%
+C-LOOK                     41.0                     40.4           139.1           243.1         95%
+
+=== Part 3: starvation: the 8-request queue at t=0, then one request near cylinder 60 every millisecond (3,000 requests) ===
+algorithm   time until cylinder 183 is served (ms from its arrival)
+FCFS             26.0 ms
+SSTF          13621.6 ms   <- STARVED: served only after the whole backlog of near-60 requests (3,000 requests arriving in 3 s) had been served
+SCAN             56.5 ms
+C-SCAN           56.5 ms
+LOOK             56.5 ms
+C-LOOK           56.5 ms

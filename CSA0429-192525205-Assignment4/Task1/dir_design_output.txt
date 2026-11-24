@@ -1,0 +1,46 @@
+=== 1. Name clash in the flat directory (two students both save 'assignment1.c') ===
+flat/assignment1.c now contains: student 7002's program   <- the first student's file has been silently overwritten
+
+=== 2. Tree: /students/<year>/<department>/<register number>/ - the same name is harmless ===
+tree:
+2025
+
+tree/2025:
+csa
+
+tree/2025/csa:
+7001
+7002
+
+tree/2025/csa/7001:
+assignment1.c
+
+=== 3. Search effort for one file among 12,000 students (directory with 12,000 entries vs tree of 24 x 500) ===
+create 12,000 files in one directory: 182 ms
+stat() one file, flat directory of 12,000 entries : 1.97 us  (ext4 hashes directory entries: dir_index)
+stat() one file, tree (24 directories x 500)       : 1.91 us
+listing the flat directory: 12000 names in 2.8 ms; a person has to scan 12,000 names, in a tree 500
+Comparisons for a LINEAR directory (FAT, ext2, old Unix): average n/2 = 6,000 per lookup in the flat directory; 24 + 250 = 274 in the tree; with a hashed directory O(1) in both
+
+=== 4. Permissions: users, groups, private home directories, group project directory ===
+drwx------ 2 stuA stuA  4096 Nov 24 06:22 home/stuA
+drwxrws--- 2 root proj1 4096 Nov 24 06:22 projects/proj1
+
+stuA reads its own notes                        ALLOWED: private notes of stuA
+stuB reads stuA's notes                         DENIED : cat: home/stuA/notes.txt: Permission denied
+stuC lists stuA's directory                     DENIED : ls: cannot open directory 'home/stuA': Permission denied
+stuA creates a file in the project folder       ALLOWED: written
+stuB (member) reads the project file            ALLOWED: design by A
+stuC (not a member) reads the project file      DENIED : cat: projects/proj1/design.txt: Permission denied
+-rw-r--r-- 1 stuA proj1 12 Nov 24 06:22 projects/proj1/design.txt
+
+=== 5. Link for a shared folder: acyclic graph (symbolic link from each member's home to the project) ===
+lrwxrwxrwx 1 root root 27 Nov 24 06:22 home/stuA/proj1 -> /tmp/college/projects/proj1
+lrwxrwxrwx 1 root root 27 Nov 24 06:22 home/stuB/proj1 -> /tmp/college/projects/proj1
+stuB reaches the project through its own link   ALLOWED: design by A
+stuC cannot follow the same path                DENIED : cat: /tmp/college/projects/proj1/design.txt: Permission denied
+
+=== 6. Attributes kept per file (stat) ===
+name=home/stuA/notes.txt  type=regular file  size=22  owner=stuA  group=stuA  mode=600 (-rw-------)  inode=1155079  links=1  modified=2026-11-24 06:22:56.316882853 +0530
+
+(temporary users removed)

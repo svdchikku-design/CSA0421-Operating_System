@@ -1,0 +1,10 @@
+  k (block of file)   FAT chain look-ups   FAT time (ns)   index reads   index time (ns)   speed-up
+         0                    0               1             1               2.2          0x   (block 388606, check ok)
+        11                   11               5             1               2.1          2x   (block 976948, check ok)
+       100                  100             150             2               2.1         70x   (block 130894, check ok)
+      1000                 1000            6022             2               2.1       2810x   (block 311672, check ok)
+     10000                10000           67691             3               1.9      36382x   (block 322475, check ok)
+    100000               100000         3841164             3               1.9    2000523x   (block 704876, check ok)
+   1000000              1000000        39210625             3               2.0   19983414x   (block 55444, check ok)
+   1048575              1048575        42999521             3               2.1   20506145x   (block 907267, check ok)
+memory for the FAT of this 4 GB file's disk region: 1048576 entries x 4 B = 4096 KB; index: 12 + 1 + 1 + 1024 index blocks x 4 KB = 4108 KB

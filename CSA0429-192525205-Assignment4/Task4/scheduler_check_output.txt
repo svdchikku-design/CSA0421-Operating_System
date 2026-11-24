@@ -1,0 +1,3 @@
+rotational=1 nr_requests=256 read_ahead_kb=128
+$ cat /sys/block/vda/queue/scheduler
+none [mq-deadline] kyber bfq 

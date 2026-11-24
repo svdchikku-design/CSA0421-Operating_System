@@ -1,0 +1,95 @@
+$ ls -li /tmp/ext4demo        (-i = inode number; hardlink.txt shares the inode of hello.txt)
+total 128
+13 -rw-r--r-- 1 root root 100000 Nov 24 06:23 data.bin
+14 drwxr-xr-x 2 root root   4096 Nov 24 06:23 dir
+12 -rw-r--r-- 2 root root     18 Nov 24 06:23 hardlink.txt
+12 -rw-r--r-- 2 root root     18 Nov 24 06:23 hello.txt
+11 drwx------ 2 root root  16384 Nov 24 06:23 lost+found
+15 lrwxrwxrwx 1 root root      9 Nov 24 06:23 symlink.txt -> hello.txt
+
+$ stat hello.txt data.bin
+  File: /tmp/ext4demo/hello.txt
+  Size: 18        	Blocks: 8          IO Block: 4096   regular file
+Device: 7,1	Inode: 12          Links: 2
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2026-11-24 06:23:10.452320712 +0530
+Modify: 2026-11-24 06:23:10.457507447 +0530
+Change: 2026-11-24 06:23:10.458655277 +0530
+ Birth: 2026-11-24 06:23:10.452320712 +0530
+  File: /tmp/ext4demo/data.bin
+  Size: 100000    	Blocks: 200        IO Block: 4096   regular file
+Device: 7,1	Inode: 13          Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2026-11-24 06:23:10.457507447 +0530
+Modify: 2026-11-24 06:23:10.458655277 +0530
+Change: 2026-11-24 06:23:10.458655277 +0530
+ Birth: 2026-11-24 06:23:10.457507447 +0530
+
+$ df -h  and  df -i  (blocks and inodes)
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop1      104M  132K   95M   1% /tmp/ext4demo
+/dev/vda        252G   13G   30G  30% /
+Filesystem       Inodes  IUsed    IFree IUse% Mounted on
+/dev/loop1        32768     15    32753    1% /tmp/ext4demo
+/dev/vda       16777216 348606 16428610    3% /
+
+$ tune2fs -l (selected fields)
+Filesystem volume name:   demo
+Filesystem magic number:  0xEF53
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype needs_recovery extent 64bit flex_bg sparse_super large_file huge_file dir_nlink extra_isize metadata_csum
+Default mount options:    user_xattr acl
+Filesystem state:         clean
+Filesystem OS type:       Linux
+Inode count:              32768
+Block count:              32768
+Free blocks:              26599
+Free inodes:              32757
+Block size:               4096
+Inodes per group:         32768
+Inode size:	          256
+Journal inode:            8
+Journal backup:           inode blocks
+
+$ dumpe2fs -h (journal fields)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype needs_recovery extent 64bit flex_bg sparse_super large_file huge_file dir_nlink extra_isize metadata_csum
+Journal inode:            8
+Journal backup:           inode blocks
+Journal features:         (none)
+Total journal size:       16M
+Total journal blocks:     4096
+Journal sequence:         0x00000001
+Journal start:            0
+
+$ filefrag -v data.bin   (extents = how ext4 allocates)
+Filesystem type is: ef53
+File size of /tmp/ext4demo/data.bin is 100000 (25 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..      24:       6682..      6706:     25:             last,eof
+/tmp/ext4demo/data.bin: 1 extent found
+
+$ debugfs -R "stat <inode>"   (the inode of data.bin: extent tree instead of 12+3 pointers)
+debugfs 1.47.0 (5-Feb-2023)
+Inode: 13   Type: regular    Mode:  0644   Flags: 0x80000
+Generation: 2376350976    Version: 0x00000000:00000002
+User:     0   Group:     0   Project:     0   Size: 100000
+File ACL: 0
+Links: 1   Blockcount: 200
+Fragment:  Address: 0    Number: 0    Size: 0
+ ctime: 0x6b04dff6:6d5a18b4 -- Tue Nov 24 06:23:10 2026
+ atime: 0x6b04dff6:6d1409dc -- Tue Nov 24 06:23:10 2026
+ mtime: 0x6b04dff6:6d5a18b4 -- Tue Nov 24 06:23:10 2026
+crtime: 0x6b04dff6:6d1409dc -- Tue Nov 24 06:23:10 2026
+Size of extra inode fields: 32
+Inode checksum: 0x8c22219f
+EXTENTS:
+(0-24):6682-6706
+
+$ mount | grep demo
+/tmp/ext4demo.img on /tmp/ext4demo type ext4 (rw,relatime)
+
+$ root file system
+/dev/vda       ext4  252G   13G   30G  30% /
+  File: "/"
+    ID: 43f90f52a91ac850 Namelen: 255     Type: ext2/ext3
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 66053021   Free: 62840202   Available: 7845365

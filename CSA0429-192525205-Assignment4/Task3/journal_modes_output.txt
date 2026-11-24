@@ -1,0 +1,4 @@
+data=journal  : 4 KB write + fsync: median   519.8 us  (3 runs: 836, 502, 520)   write without fsync: 5.7 us   [mount options: rw,relatime,nodioread_nolock,nodelalloc,data=journal]
+data=ordered  : 4 KB write + fsync: median   192.5 us  (3 runs: 606, 192, 181)   write without fsync: 1.5 us   [mount options: rw,relatime,data=ordered]
+data=writeback: 4 KB write + fsync: median   224.9 us  (3 runs: 625, 189, 225)   write without fsync: 1.2 us   [mount options: rw,relatime,data=writeback]
+relative to ordered (default): journal x2.70, ordered x1.00, writeback x1.17

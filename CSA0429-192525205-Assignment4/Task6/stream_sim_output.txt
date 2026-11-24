@@ -1,0 +1,12 @@
+400 videos x 256 chunks of 4 MB (1 GB each, 400 GB total); Zipf(1.0) popularity; 3 servers; 60,000 start-ups per run; latencies in ms
+top 10 videos get 45% of views, top 40 get 65%
+
+Design A: HDD + 4 GB RAM cache          5/s  mean     18.8  p50      0.1  p95     38.7  p99     77.3  | RAM hit 76.2%  SSD hit  0.0%  HDD reads 23.8%
+Design B: HDD + SSD hot tier + RAM      5/s  mean     11.4  p50      0.1  p95     38.7  p99     48.7  | RAM hit 76.3%  SSD hit 11.7%  HDD reads 12.1%
+
+Design A: HDD + 4 GB RAM cache         12/s  mean     19.2  p50      0.1  p95     38.7  p99     77.3  | RAM hit 76.3%  SSD hit  0.0%  HDD reads 23.7%
+Design B: HDD + SSD hot tier + RAM     12/s  mean     11.6  p50      0.1  p95     38.7  p99     68.1  | RAM hit 76.0%  SSD hit 11.9%  HDD reads 12.1%
+
+Design A: HDD + 4 GB RAM cache         25/s  mean     20.3  p50      0.1  p95     61.8  p99     83.8  | RAM hit 76.2%  SSD hit  0.0%  HDD reads 23.8%
+Design B: HDD + SSD hot tier + RAM     25/s  mean     12.1  p50      0.1  p95     38.7  p99     76.9  | RAM hit 76.1%  SSD hit 11.8%  HDD reads 12.1%
+

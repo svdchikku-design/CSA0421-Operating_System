@@ -1,0 +1,24 @@
+File 4 GB, block 4 KB -> 1,048,576 blocks (2^20); last block number 1,048,575
+pointers per indirect block = 4096 / 4 = 1024
+
+=== Disk reads to reach the LAST block (the directory entry / FCB is already in memory) ===
+contiguous : 1 read (start + k is computed, no pointer is read)
+linked     : 1,048,576 reads (each block holds the pointer to the next; the last block is the 1,048,576th)
+FAT (cached in memory): 1,048,576 memory look-ups + 1 disk read for the data block
+FAT (not cached): 1 disk read per FAT sector visited = up to ~1024 reads (1,024 entries per 4 KB FAT block, mostly sequential)
+indexed (UNIX inode): direct covers blocks 0..11; single indirect 12..1035; double indirect 1036..1,049,611
+  block 1,048,575 is in the double indirect area -> 3 reads for the pointers+data (inode itself already in memory): double-indirect block, single-indirect block, data block;  4 if the inode must also be read
+
+=== Maximum file size with 12 direct + 1 single + 1 double + 1 triple indirect (4 KB blocks, 4 B addresses) ===
+blocks: 12 + 1024 + 1,048,576 + 1,073,741,824 = 1,074,791,436
+size  : 4,402,345,721,856 bytes = 4.0039 TiB (4,100.0 GiB)
+        direct only 48 KB; + single 4.05 MB; + double 4.004 GB; + triple 4.004 TB
+(the 32-bit block address also limits it: 2^32 blocks x 4 KB = 16 TB; ext2/3 are limited to 4 TB by the structure above)
+
+=== Free-space management for a 4 TB disk, 4 KB blocks ===
+blocks = 4 TB / 4 KB = 1,073,741,824 = 2^30
+bit vector = 1,073,741,824 bits = 134,217,728 bytes = 128 MB  (0.0031 % of the disk)
+linked free list: one pointer (4 B) kept inside each free block -> no extra space, but finding n free blocks needs n reads; list head only in memory
+grouping: the first free block holds the addresses of n-1 other free blocks (here 1023 per block) + pointer to the next group block
+counting: store (first free block, run length) pairs: a mostly empty disk with r free runs needs 8 B x r  (e.g. 1,000 runs = 8 KB)
+FAT for 4 TB disk, 4 KB clusters, 4 B entries: 1,073,741,824 x 4 B = 4 GB (!)  -> too big for memory; 32 KB clusters: 512 MB

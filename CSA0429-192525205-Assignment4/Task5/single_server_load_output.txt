@@ -1,0 +1,9 @@
+one server, every request needs the shared disk for 8 ms (read) or 12 ms (write): requests are served one after another (assumed disk times)
+ users  read: mean (ms)  read: p95  read req/s  write: mean (ms)  write req/s
+     1             11.0        9.8          91              13.4           74
+     2              9.8        9.9         201              24.1           81
+     4             16.8       17.3         232              47.9           81
+     8             32.9       33.9         235              95.2           81
+    16             65.7       69.3         235             189.4           82
+    32            130.9      138.2         236             378.9           82
+    64            260.5      273.9         236             756.4           82

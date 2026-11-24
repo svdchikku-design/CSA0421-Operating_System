@@ -1,0 +1,13 @@
+File creation = 3 block writes; the disk may complete the writes in any order (6 orders) and power fails after k of them.
+
+no journal   : 10 of 24 crash points leave an INCONSISTENT file system (42 %)
+   after 1 writes, e.g. only ('dirent_bitmap',) written -> directory entry without inode/data (dangling name)
+   after 2 writes, e.g. only ('data', 'dirent_bitmap') written -> directory entry without inode/data (dangling name)
+journaling   : 0 of 48 crash points inconsistent (every point gives either the old state or the complete new state); log + checkpoint = 7 writes instead of 3 (x2.33)
+copy-on-write: 0 of 30 crash points inconsistent; 4 writes (3 new blocks + 1 atomic pointer write)
+
+=== Blocks written for ONE small random update (4 KB) ===
+ext4 ordered : 1 data block + 1 metadata block into the journal + the metadata block in place  -> ~3 (journal mode: data also journaled: ~4)
+Btrfs/ZFS-like COW tree with 2^9 blocks (fan-out 256, depth 2) : 1 data block + 2 tree nodes copied + root = 4 blocks written; the old blocks stay valid until freed (snapshot)
+Btrfs/ZFS-like COW tree with 2^19 blocks (fan-out 256, depth 3) : 1 data block + 3 tree nodes copied + root = 5 blocks written; the old blocks stay valid until freed (snapshot)
+Btrfs/ZFS-like COW tree with 2^29 blocks (fan-out 256, depth 4) : 1 data block + 4 tree nodes copied + root = 6 blocks written; the old blocks stay valid until freed (snapshot)

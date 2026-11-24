@@ -1,0 +1,18 @@
+=== Capacity ===
+3000 videos x 1.0 GB = 3.0 TB original; with 3 quality renditions (1.0 + 0.5 + 0.25 of original) = 5.25 TB; 1 backup copy in cloud = 5.25 TB more
+=== Throughput at the peak ===
+Watchers in the peak hour: 40,000; average concurrent viewers = 30,000
+Streaming rate = 30,000 x 4 Mbit/s = 15,000 MB/s = 120 Gbit/s
+With Zipf popularity ~65% of requests hit the top 40 videos (simulation); those 40 GB fit in RAM+SSD, so only 35% reach HDD
+=== Disk reads to start playing at any minute ===
+Start-up = 1 index/metadata read (moov/segment index, ~64 KB at the start of the file) + 1 read of the chunk that contains the chosen minute.
+Contiguous (extent) file with an index of chunk offsets: 2 reads, 2 seeks on HDD (~25 ms), 2 flash reads on SSD (<1 ms).
+Linked allocation: reaching minute 45 of a 1 GB file (4 KB blocks) = 45/60*262,144 = 196,608 block reads -> impossible; indexed/extent needed.
+ext4 extents: inode holds 4 extents; a 1 GB file written once has 8-9 extents (128 MB each) -> 1 extent-tree block + data = 2-3 reads.
+=== Number of servers ===
+HDD server (8 x 7200 rpm, 150 MB/s each, ~60 % usable for streaming): 720 MB/s -> servers needed for 15,000 MB/s of misses+hits: 20.8
+SSD/NVMe server (2 GB/s usable): 2,000 MB/s -> servers needed for 15,000 MB/s of misses+hits: 7.5
+10 Gbit/s network port: 1,000 MB/s -> servers needed for 15,000 MB/s of misses+hits: 15.0
+Disk traffic after caching (35 % misses): 5,250 MB/s -> 7.3 HDD servers; network 15.0 GB/s -> 15.0 servers with a 10 Gbit port each: the NETWORK, not the disks, sets the server count, so a few-servers design cannot carry the whole peak -> hybrid with CDN (Stage 5 of the report)
+=== Replication ===
+Replicas: 2 copies on different servers (RF=2) + 1 cloud backup; storage = 2 x 1.75 x 3 TB = 10.5 TB local. Availability with 99.5 % per server: both copies down = 2.5e-5 (~13 min per year).

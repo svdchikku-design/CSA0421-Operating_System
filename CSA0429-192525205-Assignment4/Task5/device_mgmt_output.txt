@@ -1,0 +1,37 @@
+== Devices seen by the kernel (block vs character) ==
+crw-rw-rw- 1,,3 /dev/null
+crw-rw-rw- 5,,0 /dev/tty
+brw------- 254,,0 /dev/vda
+
+== Block device queue parameters ==
+logical_block_size = 512
+physical_block_size = 4096
+rotational = 1
+read_ahead_kb = 128
+nr_requests = 256
+
+== Driver / interrupts (first lines of /proc/interrupts, /proc/devices) ==
+           CPU0       CPU1       
+ 24:          1          0  IO-APIC   5-edge      ACPI:Ged
+ 25:          0          1  IO-APIC   6-edge      ACPI:Ged
+ 26:          9          0  IO-APIC   4-edge      ttyS0
+Block devices:
+
+== Buffering: write 64 MB with 4 KB writes, buffered vs O_DIRECT vs fsync each block (256 blocks) ==
+67108864 bytes (67 MB, 64 MiB) copied, 0.0309349 s, 2.2 GB/s
+67108864 bytes (67 MB, 64 MiB) copied, 0.628704 s, 107 MB/s
+1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.0882519 s, 11.9 MB/s
+
+== Caching: read the same 64 MB file, cold (cache dropped) then warm (page cache) ==
+(page cache dropped)
+67108864 bytes (67 MB, 64 MiB) copied, 0.0358649 s, 1.9 GB/s
+67108864 bytes (67 MB, 64 MiB) copied, 0.00859357 s, 7.8 GB/s
+
+== Page cache size now (free -m) ==
+               total        used        free      shared  buff/cache   available
+Mem:            8023         361        7653          12         222        7662
+
+== Spooling: jobs go to a queue directory and one 'daemon' drains it in order, so the slow device is used by one job at a time ==
+printing 1.job: job1 data
+printing 2.job: job2 data
+printing 3.job: job3 data
