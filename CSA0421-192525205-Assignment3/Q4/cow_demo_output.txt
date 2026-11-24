@@ -1,0 +1,11 @@
+parent allocated and wrote 200 MB
+  parent before fork                 Rss  206532 kB  Pss  205158 kB  Private_Dirty  204936 kB  Shared_Dirty       0 kB
+  child after writing 0% of the data Rss  205924 kB  Pss  102612 kB  Private_Dirty      44 kB  Shared_Dirty  204888 kB
+      (0 COW page faults, 0.0 ms)
+  parent while child still shares    Rss  206764 kB  Pss  102745 kB  Private_Dirty      48 kB  Shared_Dirty  204888 kB
+  child after writing 25% of the data Rss  206044 kB  Pss  128239 kB  Private_Dirty   51244 kB  Shared_Dirty  153688 kB
+      (12800 COW page faults, 76.6 ms)
+  child after writing 100% of the data Rss  206044 kB  Pss  205039 kB  Private_Dirty  204844 kB  Shared_Dirty      88 kB
+      (38400 COW page faults, 293.7 ms)
+fork() of the 200 MB process took 2.61 ms (only the page tables are copied)
+for comparison, physically copying 200 MB with memcpy takes 22.2 ms (checksum byte 1)

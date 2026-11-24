@@ -1,0 +1,22 @@
+code (main)      0x55bb64b7f209
+rodata           0x55bb64b80008
+data (init)      0x55bb64b82010
+bss              0x55bb64b82040
+heap (malloc)    0x55bba40fa2a0
+heap (2nd malloc) 0x55bba41fa2b0   
+stack (local)    0x7ffef60d4bd4
+
+55bb64b7e000-55bb64b7f000 r--p 00000000 fe:00 819477                     /home/claude/work/A3/Q3/maps_demo
+55bb64b7f000-55bb64b80000 r-xp 00001000 fe:00 819477                     /home/claude/work/A3/Q3/maps_demo
+55bb64b80000-55bb64b81000 r--p 00002000 fe:00 819477                     /home/claude/work/A3/Q3/maps_demo
+55bb64b81000-55bb64b82000 r--p 00002000 fe:00 819477                     /home/claude/work/A3/Q3/maps_demo
+55bb64b82000-55bb64b83000 rw-p 00003000 fe:00 819477                     /home/claude/work/A3/Q3/maps_demo
+55bba40fa000-55bba431b000 rw-p 00000000 00:00 0                          [heap]
+7fb713200000-7fb713228000 r--p 00000000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb713228000-7fb7133b1000 r-xp 00028000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb7133b1000-7fb713400000 r--p 001b1000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb713400000-7fb713404000 r--p 001ff000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb713404000-7fb713406000 rw-p 00203000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7fb7134d2000-7fb7134d6000 r--p 00000000 00:00 0                          [vvar]
+7fb7134d8000-7fb7134da000 r-xp 00000000 00:00 0                          [vdso]
+7ffef60b6000-7ffef60db000 rw-p 00000000 00:00 0                          [stack]

@@ -1,0 +1,28 @@
+
+LOCALITY reference string (100000 references, 64 pages)
+frames   FIFO     LRU   Optimal   Clock   (page faults)
+   3    52654    51562    33156    52430
+   4    39547    36595    21209    38626
+   5    29616    23263    13344    26992
+   6    23643    15268     9146    19915
+   7    19971    11441     8169    15377
+   8    17587     9756     7532    12580
+   9    15893     9033     7041    10811
+  10    14570     8664     6635     9733
+
+RANDOM reference string (100000 references, 64 pages)
+frames   FIFO     LRU   Optimal   Clock   (page faults)
+   3    95322    95328    81530    95325
+   4    93704    93691    76322    93705
+   5    92291    92246    71951    92271
+   6    90670    90668    68122    90679
+   7    89135    89087    64707    89093
+   8    87509    87546    61590    87505
+   9    85983    85919    58738    85940
+  10    84418    84356    56098    84382
+
+Running time for 100,000 references (locality string, best of 5), per-reference cost and extra state:
+frames  FIFO(ms)  LRU(ms)  OPT(ms)  Clock(ms)
+   4      0.791    0.967    1.058     1.217
+   8      1.061    1.193    1.155     1.288
+  16      1.328    1.567    1.444     1.514

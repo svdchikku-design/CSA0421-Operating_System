@@ -1,0 +1,13 @@
+write (direct): 536870912 bytes (537 MB, 512 MiB) copied, 0.756019 s, 710 MB/s
+read, uncached (direct): 536870912 bytes (537 MB, 512 MiB) copied, 0.460133 s, 1.2 GB/s
+read, 1st buffered: 536870912 bytes (537 MB, 512 MiB) copied, 1.72554 s, 311 MB/s
+read, 2nd buffered (from page cache): 536870912 bytes (537 MB, 512 MiB) copied, 0.0915916 s, 5.9 GB/s
+Only one virtual disk (vda) is available, so an SSD-vs-HDD comparison is not possible here; typical figures are in the report.
+
+--- swap file: create, format, enable, show, disable
+Setting up swapspace version 1, size = 64 MiB (67104768 bytes)
+no label, UUID=9f7a99d4-3540-43d8-b97f-1cc79d9d9253
+Filename				Type		Size		Used		Priority
+/tmp/swapfile                           file		65532		0		-2
+after swapoff:
+Filename				Type		Size		Used		Priority

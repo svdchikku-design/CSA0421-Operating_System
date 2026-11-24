@@ -1,0 +1,21 @@
+
+3 tasks (design): 20800 references, 1750 MB touched (of 1848 MB available), RT locked = 100 MB
+policy    RT faults after start  ML faults  logger  task4   total   ML fault rate
+fifo                          0       1500     150      0    1650    12.5%
+lru                           0       1500     150      0    1650    12.5%
+clock                         0       1500     150      0    1650    12.5%
+opt                           0       1500     150      0    1650    12.5%
+
+4th task +500 MB: 24800 references, 2250 MB touched (of 1848 MB available), RT locked = 100 MB
+policy    RT faults after start  ML faults  logger  task4   total   ML fault rate
+fifo                          0      12000     800   2117   14917   100.0%
+lru                           0      12000     800   1720   14520   100.0%
+clock                         0      12000     800   1948   14748   100.0%
+opt                           0       1507     616   1161    3284    12.6%
+
+4th task, ML model quantised to 1000 MB: 20800 references, 1750 MB touched (of 1848 MB available), RT locked = 100 MB
+policy    RT faults after start  ML faults  logger  task4   total   ML fault rate
+fifo                          0       1000     150    500    1650    12.5%
+lru                           0       1000     150    500    1650    12.5%
+clock                         0       1000     150    500    1650    12.5%
+opt                           0       1000     150    500    1650    12.5%

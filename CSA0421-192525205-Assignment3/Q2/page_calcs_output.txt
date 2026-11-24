@@ -1,0 +1,17 @@
+=== Page-table size, 4 KB pages, flat single-level table ===
+32-bit address space: 1,048,576 pages x 4 B entries = 4 MB per process
+48-bit address space: 68,719,476,736 pages x 8 B entries = 524,288 MB per process (512 GB)
+48-bit, 4-level table (x86-64): each table = 512 entries x 8 B = 4 KB; a process using 16 MB (4096 pages) needs:
+   level1 tables: 8, level2: 1, level3: 1, level4(root): 1 -> 44 KB instead of 512 GB
+
+=== Effective access time (memory 100 ns, TLB 10 ns, 1-level table) ===
+no TLB: 2 x 100 = 200 ns (4-level table: 500 ns)
+hit ratio 0.80: EAT = 0.8*110 + 0.20*210 = 130.0 ns  (slowdown 30% vs 100 ns);  with 4-level table 190.0 ns
+hit ratio 0.95: EAT = 0.95*110 + 0.05*210 = 115.0 ns  (slowdown 15% vs 100 ns);  with 4-level table 130.0 ns
+hit ratio 0.99: EAT = 0.99*110 + 0.01*210 = 111.0 ns  (slowdown 11% vs 100 ns);  with 4-level table 114.0 ns
+
+=== Internal fragmentation, 100 processes, random sizes 10 KB .. 10 MB (seed 42) ===
+total memory requested: 458.7 MB
+page 1 KB: wasted         47 KB =  0.010% of requested; avg      0.5 KB/process (theory ps/2 = 0.5 KB); pages 469,787; page tables    3,670 KB
+page 4 KB: wasted        196 KB =  0.042% of requested; avg      2.0 KB/process (theory ps/2 = 2.0 KB); pages 117,484; page tables      918 KB
+page 2 MB: wasted     99,604 KB = 21.204% of requested; avg    996.0 KB/process (theory ps/2 = 1024.0 KB); pages     278; page tables        2 KB

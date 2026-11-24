@@ -1,0 +1,5 @@
+256 MB = 65536 pages
+sequential, first touch :   65539 faults     134.5 ms  (2052 ns/page)
+sequential, second pass :       0 faults       1.4 ms  (22 ns/page)
+random, first touch     :   65536 faults     150.7 ms  (2299 ns/page)
+random, second pass     :       0 faults       1.8 ms  (27 ns/page)

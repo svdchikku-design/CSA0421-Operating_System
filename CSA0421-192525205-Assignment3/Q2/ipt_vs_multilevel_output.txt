@@ -1,0 +1,3 @@
+frame checksums: multi-level 10055912594, inverted 10055912594 -> both methods find the same frames: yes
+2-level table : 1.8 ns per translation, 2 memory references, space 4104 KB for this process (1024 second-level tables)
+inverted+hash : 3.8 ns per translation, 1.07 entries examined on average, space 1280 KB for the WHOLE system (65536 frames x 12 B + hash 512 KB)

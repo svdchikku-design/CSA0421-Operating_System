@@ -1,0 +1,106 @@
+=== 1. Executable sizes (bytes) ===
+bank_dlopen       16344
+bank_dynamic      16488
+bank_static      789944
+libenc.so         15232
+
+=== 2. ldd ===
+--- bank_static
+	not a dynamic executable
+--- bank_dynamic
+	linux-vdso.so.1 (0x00007fcb6da5a000)
+	libenc.so => /home/claude/work/A3/Q1/./libenc.so (0x00007fcb6da48000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fcb6d800000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fcb6da5c000)
+--- bank_dlopen
+	linux-vdso.so.1 (0x00007fe8c93f9000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fe8c9000000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fe8c93fb000)
+
+=== 3. Output of each version ===
+libenc version 1 (key 0x5A)
+cipher bytes: 0a 1b 03 7a 6b 6a
+&main = 0x401905   &encrypt_buf = 0x401bd0
+libenc version 1 (key 0x5A)
+cipher bytes: 0a 1b 03 7a 6b 6a
+&main = 0x55dd773e42b9   &encrypt_buf = 0x7fe6f4f4210a
+program started, library not loaded yet
+libenc version 1 (key 0x5A)
+cipher bytes: 0a 1b 03 7a 6b 6a
+&encrypt_buf (loaded at run time) = 0x7f7dda40110a
+
+=== 4. Load addresses from /proc/self/maps (dynamic version) ===
+5606d4b96000-5606d4b97000 r--p 00000000 fe:00 819317                     /home/claude/work/A3/Q1/bank_dynamic
+5606d4b97000-5606d4b98000 r-xp 00001000 fe:00 819317                     /home/claude/work/A3/Q1/bank_dynamic
+5606d4b98000-5606d4b99000 r--p 00002000 fe:00 819317                     /home/claude/work/A3/Q1/bank_dynamic
+5606d4b99000-5606d4b9a000 r--p 00002000 fe:00 819317                     /home/claude/work/A3/Q1/bank_dynamic
+5606d4b9a000-5606d4b9b000 rw-p 00003000 fe:00 819317                     /home/claude/work/A3/Q1/bank_dynamic
+5606f74a7000-5606f74c8000 rw-p 00000000 00:00 0                          [heap]
+7f47b3400000-7f47b3428000 r--p 00000000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7f47b3428000-7f47b35b1000 r-xp 00028000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7f47b35b1000-7f47b3600000 r--p 001b1000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7f47b3600000-7f47b3604000 r--p 001ff000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7f47b3604000-7f47b3606000 rw-p 00203000 fe:00 300377                     /usr/lib/x86_64-linux-gnu/libc.so.6
+7f47b3789000-7f47b378a000 r--p 00000000 fe:00 819454                     /home/claude/work/A3/Q1/libenc.so
+7f47b378a000-7f47b378b000 r-xp 00001000 fe:00 819454                     /home/claude/work/A3/Q1/libenc.so
+7f47b378b000-7f47b378c000 r--p 00002000 fe:00 819454                     /home/claude/work/A3/Q1/libenc.so
+7f47b378c000-7f47b378d000 r--p 00002000 fe:00 819454                     /home/claude/work/A3/Q1/libenc.so
+7f47b378d000-7f47b378e000 rw-p 00003000 fe:00 819454                     /home/claude/work/A3/Q1/libenc.so
+7f47b3798000-7f47b3799000 r--p 00000000 fe:00 299986                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f47b3799000-7f47b37c4000 r-xp 00001000 fe:00 299986                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f47b37c4000-7f47b37ce000 r--p 0002c000 fe:00 299986                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f47b37ce000-7f47b37d0000 r--p 00036000 fe:00 299986                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f47b37d0000-7f47b37d2000 rw-p 00038000 fe:00 299986                     /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fff5eabd000-7fff5eae2000 rw-p 00000000 00:00 0                          [stack]
+
+=== 4b. Run twice: ASLR gives different addresses each time ===
+&main = 0x560b288f82b9   &encrypt_buf = 0x7fde31ad910a
+&main = 0x560559bed2b9   &encrypt_buf = 0x7f01f0f4410a
+
+=== 5. Start-up time: 2000 runs each ===
+bank_static: 1.1296 ms per run
+bank_dynamic: 1.3946 ms per run
+bank_dlopen ./libenc.so: 1.3831 ms per run
+
+=== 6. Memory of one running copy (kB, from /proc/<pid>/smaps_rollup) ===
+bank_static: Rss: 752 kB Pss: 744 kB Pss_Dirty: 744 kB Pss_Anon: 72 kB Pss_File: 672 kB Pss_Shmem: 0 kB Shared_Clean: 4 kB Private_Clean: 0 kB Private_Dirty: 740 kB 
+bank_dynamic: Rss: 1860 kB Pss: 321 kB Pss_Dirty: 140 kB Pss_Anon: 128 kB Pss_File: 193 kB Pss_Shmem: 0 kB Shared_Clean: 1708 kB Private_Clean: 12 kB Private_Dirty: 140 kB 
+
+=== 7. Two copies of bank_dynamic: which pages are shared? (smaps, kB) ===
+--- mapping of libenc.so in copy 1 (all segments summed)
+Private_Dirty: 8 kB   Private_Clean: 0 kB   Rss: 20 kB   Shared_Dirty: 0 kB   Shared_Clean: 12 kB   Pss: 14 kB   
+--- mapping of libc.so.6 in copy 1 (all segments summed)
+Private_Dirty: 24 kB   Private_Clean: 0 kB   Rss: 1512 kB   Shared_Dirty: 0 kB   Shared_Clean: 1488 kB   Pss: 175 kB   
+--- mapping of bank_dynamic in copy 1 (all segments summed)
+Private_Dirty: 8 kB   Private_Clean: 0 kB   Rss: 20 kB   Shared_Dirty: 12 kB   Shared_Clean: 0 kB   Pss: 14 kB   
+Per-process PSS of the whole copies:
+Rss: 1864 kB Pss: 315 kB Pss_Dirty: 138 kB Pss_Anon: 132 kB Pss_File: 183 kB Pss_Shmem: 0 kB 
+Rss: 1864 kB Pss: 316 kB Pss_Dirty: 138 kB Pss_Anon: 132 kB Pss_File: 184 kB Pss_Shmem: 0 kB 
+
+=== 8. Replace the library WITHOUT recompiling ===
+bank_dynamic (shared lib replaced):
+libenc version 2 (SECURITY FIX, key 0xC3, rotate)
+cipher bytes: 27 05 35 c7 e5 e7
+&main = 0x560a421ba2b9   &encrypt_buf = 0x7f51c051910a
+bank_static (still contains old code):
+libenc version 1 (key 0x5A)
+cipher bytes: 0a 1b 03 7a 6b 6a
+&main = 0x401905   &encrypt_buf = 0x401bd0
+bank_dlopen:
+program started, library not loaded yet
+libenc version 2 (SECURITY FIX, key 0xC3, rotate)
+cipher bytes: 27 05 35 c7 e5 e7
+&encrypt_buf (loaded at run time) = 0x7f7110b2110a
+
+=== 9. Library missing ===
+--- bank_dynamic:
+./bank_dynamic: error while loading shared libraries: libenc.so: cannot open shared object file: No such file or directory
+exit status 127
+--- bank_static:
+libenc version 1 (key 0x5A)
+exit status 0
+--- bank_dlopen:
+dlopen failed: ./libenc.so: cannot open shared object file: No such file or directory
+-> falling back: transaction refused safely (exit 2)
+program started, library not loaded yet
+exit status 2

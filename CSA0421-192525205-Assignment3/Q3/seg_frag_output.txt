@@ -1,0 +1,7 @@
+segment sizes (KB): [61, 39, 70, 103, 26, 29, 88, 32, 66, 94, 27, 84, 47, 24, 31, 75, 73, 28, 50, 31] total 1078
+after loading 20 segments: used 1078 KB, free 422 KB in 1 hole(s)
+after removing 10 random segments [0, 1, 3, 7, 9, 10, 12, 13, 14, 17]: holes (KB) = [100, 103, 32, 121, 102, 28, 422]
+total free 908 KB, largest hole 422 KB -> external fragmentation = 1 - largest/total = 53.5%
+a new segment of 450 KB: total free 908 KB >= 450 KB but largest hole 422 KB -> CANNOT BE LOADED (external fragmentation)
+compaction would copy 592 KB of live segments (about 57.8 ms at 10 GB/s) to merge the holes
+same 20 segments stored as 4 KB pages: internal fragmentation 26 KB (<= 60 KB), external fragmentation 0

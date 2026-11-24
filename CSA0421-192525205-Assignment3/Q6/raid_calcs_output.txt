@@ -1,0 +1,23 @@
+=== Usable capacity of 6 disks of 4 TB (24 TB raw) ===
+RAID 0                                 usable  24.0 TB (100.0%)   disk failures survived: 0
+RAID 1 (3 mirrored pairs = RAID 10)    usable  12.0 TB ( 50.0%)   disk failures survived: 1 guaranteed, up to 3 (one per pair)
+RAID 1 (one 6-way mirror)              usable   4.0 TB ( 16.7%)   disk failures survived: 5
+RAID 5                                 usable  20.0 TB ( 83.3%)   disk failures survived: 1
+RAID 6                                 usable  16.0 TB ( 66.7%)   disk failures survived: 2
+RAID 10                                usable  12.0 TB ( 50.0%)   disk failures survived: 1 guaranteed, up to 3 (one per pair)
+
+=== Probability of data loss after one disk has failed ===
+assumptions: annual failure rate AFR = 3% per disk, rebuild window = 24 h -> P(a given disk fails during rebuild) = 0.00008
+RAID 1 / RAID 10 (partner must fail): 0.00008 = 1 in 11,984
+RAID 5 (any of 5 others fails)        : 0.00042 = 1 in 2,397  (5.0x worse than RAID 1)
+RAID 6 (two more must fail)           : 6.96e-08 = 1 in 14,363,400
+
+Unrecoverable read error while rebuilding RAID 5 (consumer drive 1 error per 1e14 bits): must read 20 TB = 1.60e+14 bits -> P(at least one URE) = 79.8%
+RAID 1 rebuild reads only the 4 TB partner: P(URE) = 27.4%;  RAID 6 can still correct it with the second parity
+Enterprise drives (1 error per 1e15 bits): RAID 5 URE risk = 14.8%
+
+=== Write cost (disk operations per small write) ===
+RAID 0: 1   RAID 1/10: 2 (both copies)   RAID 5: 4 (read old data + old parity, write new data + new parity)   RAID 6: 6 (two parities)
+
+=== Swap sizing for the records server (assumption: 32 GB RAM, hibernation not used) ===
+rule of thumb: swap = 0.5 x RAM = 16 GB for a server with large RAM (1 x RAM = 32 GB only if hibernation is needed); peak-load headroom: add the size of the largest process that can burst above RAM

@@ -1,0 +1,9 @@
+no lock   : mean 442.8 us  median 432.7 us  p99 583.8 us  p99.9 1196.1 us  WORST 2160.2 us | page faults in loop 47963 | reclaimer took pages 600 times, refused 0 times
+mlock     : mean 416.6 us  median 394.1 us  p99 550.7 us  p99.9 2478.0 us  WORST 5780.3 us | page faults in loop 12 | reclaimer took pages 0 times, refused 581 times
+mlock+FIFO: mean 366.5 us  median 345.5 us  p99 548.2 us  p99.9 2842.8 us  WORST 8770.9 us | page faults in loop 12 | reclaimer took pages 0 times, refused 513 times
+no lock   : mean 466.9 us  median 435.0 us  p99 672.9 us  p99.9 7326.0 us  WORST 20978.1 us | page faults in loop 47972 | reclaimer took pages 606 times, refused 0 times
+mlock     : mean 412.3 us  median 398.3 us  p99 534.0 us  p99.9 1469.2 us  WORST 2544.7 us | page faults in loop 12 | reclaimer took pages 0 times, refused 573 times
+mlock+FIFO: mean 354.3 us  median 339.8 us  p99 463.4 us  p99.9 641.4 us  WORST 2603.4 us | page faults in loop 12 | reclaimer took pages 0 times, refused 508 times
+no lock   : mean 452.5 us  median 427.8 us  p99 578.2 us  p99.9 3566.6 us  WORST 16224.8 us | page faults in loop 47968 | reclaimer took pages 600 times, refused 0 times
+mlock     : mean 415.1 us  median 392.2 us  p99 550.8 us  p99.9 2566.0 us  WORST 2750.1 us | page faults in loop 12 | reclaimer took pages 0 times, refused 579 times
+mlock+FIFO: mean 361.5 us  median 338.4 us  p99 483.5 us  p99.9 2051.6 us  WORST 4391.5 us | page faults in loop 12 | reclaimer took pages 0 times, refused 518 times

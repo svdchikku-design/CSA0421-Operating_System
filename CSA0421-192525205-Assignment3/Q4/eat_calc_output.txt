@@ -1,0 +1,11 @@
+=== EAT = (1-p) x 100 ns + p x 8,000,000 ns ===
+p =     1 in 1,000: EAT =      8,099.9 ns  ->     81.0x slower than 100 ns (     8,000% slow-down)
+p =   1 in 100,000: EAT =        180.0 ns  ->      1.8x slower than 100 ns (        80% slow-down)
+p = 1 in 1,000,000: EAT =        108.0 ns  ->      1.1x slower than 100 ns (         8% slow-down)
+
+Max page-fault rate for a 10% slow-down: (1-p)*100 + p*8e6 <= 110  ->  p <= 10/(8e6-100) = 1.250e-06 = 1 fault in 799,990 accesses
+
+=== Alternative: 32 GB machine (no faults after loading) vs demand paging at the measured rate ===
+measured-like rate p=1e-04: EAT    900.0 ns vs 100 ns with enough RAM -> run time x9.00
+measured-like rate p=1e-05: EAT    180.0 ns vs 100 ns with enough RAM -> run time x1.80
+measured-like rate p=1e-06: EAT    108.0 ns vs 100 ns with enough RAM -> run time x1.08

@@ -1,0 +1,7 @@
+test 0: write through NULL pointer
+  parent: child killed by signal 11 (Segmentation fault)
+test 1: write into a string literal (read-only segment)
+  parent: child killed by signal 11 (Segmentation fault)
+test 2: read far outside every segment (address 0x7ffff0000000), handler installed
+  child: caught SIGSEGV (signal 11), si_code=1 (SEGV_MAPERR: address not mapped), faulting address 0x7ffff0000000
+  parent: child exited with status 11

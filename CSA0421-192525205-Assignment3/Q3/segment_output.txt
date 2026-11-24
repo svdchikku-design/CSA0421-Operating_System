@@ -1,0 +1,8 @@
+(0,   53) -> physical 1453  (= base 1400 + 53, segment code)
+(1,  399) -> physical 6699  (= base 6300 + 399, segment data)
+(2, 1099) -> physical 5399  (= base 4300 + 1099, segment heap)
+(3,    0) -> physical 3200  (= base 3200 + 0, segment stack)
+(4,  999) -> physical 5699  (= base 4700 + 999, segment libs)
+(1,  400) -> TRAP: offset 400 >= limit 400 of data (addressing error)
+(3,  450) -> TRAP: offset 450 >= limit 400 of stack (addressing error)
+(7,   10) -> TRAP: segment 7 does not exist

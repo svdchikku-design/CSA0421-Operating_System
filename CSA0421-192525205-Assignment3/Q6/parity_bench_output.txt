@@ -1,0 +1,4 @@
+RAID 5 parity recovery of lost disk 0: correct
+RAID 6 recovery of TWO lost disks (0 and 2) from P and Q: correct
+parity for one 16 KB stripe (4 data blocks x 4 KB): RAID 5 (P only) 404 ns, RAID 6 (P and Q) 26363 ns = 65.2x more CPU work
+a hard disk write takes ~5,000,000 ns, so the RAID 6 parity CPU time (unoptimised table-free code; production code uses SIMD) is only 0.53% of one disk write: the real extra cost is the 2 additional disk operations
