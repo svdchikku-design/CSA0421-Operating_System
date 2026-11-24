@@ -1,0 +1,9 @@
+# Commands to run on your own machine (minikube or kind), with docker installed:
+minikube start --cpus 2 --memory 4096        # or: kind create cluster
+docker build -t result-portal:1.0 ../B2 && minikube image load result-portal:1.0
+kubectl apply -f deployment.yaml -f service.yaml
+kubectl get pods -o wide                      # expect 3 pods Running
+kubectl delete pod <one-pod-name>             # a new pod appears at once: the Deployment keeps replicas=3
+kubectl get pods -w
+kubectl scale deployment result-portal --replicas=6 && kubectl get pods
+kubectl apply -f hpa.yaml && kubectl top pods

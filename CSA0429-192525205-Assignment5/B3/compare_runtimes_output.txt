@@ -1,0 +1,4 @@
+host: 2 CPUs; load: 8 keep-alive clients for 6 s; Flask development server (threaded); gunicorn is not installed here
+bare metal (process on host)         start-up  145 ms | RSS  34636 kB | requests=7132 errors=0 rps=1187 mean=6.7ms p95=8.7ms p99=10.3ms
+container-style, limit 100 % of 1 CPU start-up  206 ms | RSS  34632 kB | requests=7109 errors=0 rps=1183 mean=6.8ms p95=8.9ms p99=10.4ms
+container-style, limit 50 % of 1 CPU start-up  269 ms | RSS  34600 kB | requests=3552 errors=0 rps=591 mean=13.5ms p95=56.2ms p99=58.9ms

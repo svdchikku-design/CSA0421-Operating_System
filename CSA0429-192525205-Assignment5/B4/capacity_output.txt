@@ -1,0 +1,5 @@
+requests: 150,000 x 5 = 750,000; average 104 req/s; peak (5x) 521 req/s
+one pod limited to 0.5 CPU: measured 591 req/s on the stand-in -> ~59 req/s for the real handler (/10)
+pods for the peak: 9; with 30 % headroom: 12  -> CPU requested 3.0 cores (requests), up to 6.0 cores (limits), memory 6.0 GiB (limit 512 MiB each)
+One physical server with 8 cores (assume 6 usable for the portal, 1,187 req/s per core / 10): 712 req/s -> enough for the peak, but no redundancy
+Cost idea: the extra pods are needed only for about the 2 hours of result day; if one pod costs $0.03/hour (assumption), 12 pods x 2 h = $0.72 per result day (plus load balancer, database and traffic costs)

@@ -1,0 +1,2 @@
+# Run the log summary at minute 0 of every hour and append the result to a report file
+0 * * * * /opt/portal/analyze_log.sh >> /var/log/portal/hourly_summary.log 2>&1

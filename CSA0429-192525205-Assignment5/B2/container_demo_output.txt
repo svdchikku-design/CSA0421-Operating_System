@@ -1,0 +1,18 @@
+== 1. Namespaces: the process sees its own PID 1 and hostname ==
+hostname=result-portal pid=1
+    PID TTY          TIME CMD
+      1 ?        00:00:00 sh
+      4 ?        00:00:00 ps
+host hostname unchanged: vm
+
+== 2. Network namespace: separate, empty network stack ==
+    lo
+
+== 3. cgroup memory limit: a 64 MB limit kills a process that allocates 200 MB (what --memory does) ==
+./container_demo.sh: line 13:   451 Killed                  sh -c "echo \$\$ > $CG/memory/demo/cgroup.procs; exec python3 -c 'b=bytearray(200*1024*1024); print(\"allocated\")'"
+exit status: 137 (137 = killed by SIGKILL, the out-of-memory killer)
+memory.max_usage_in_bytes = 67108864 ; failcnt = 37
+
+== 4. cgroup CPU limit: 0.5 CPU (cpu.cfs_quota_us 50000 per 100000) on a CPU-bound loop for 3 s ==
+quota=-1  cpu seconds used in 3 s wall: 2.99
+quota=50000  cpu seconds used in 3 s wall: 1.52

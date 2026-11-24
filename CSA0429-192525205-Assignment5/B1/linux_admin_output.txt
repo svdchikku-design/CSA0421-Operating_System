@@ -1,0 +1,75 @@
+== OS and kernel ==
+Ubuntu 24.04.5 LTS, kernel 6.18.44-fc-v819, 2 CPUs
+
+== Processes: top 5 by memory (ps) ==
+  PID USER     %CPU %MEM   RSS COMMAND
+  111 root      1.3  2.3 192436 claude
+   88 root      0.0  0.4 34584 environment-man
+   76 root      0.0  0.3 28108 rclone-filestor
+    1 root      0.1  0.0  5688 process_api
+  353 root      0.0  0.0  4436 ps
+
+== Process states summary ==
+     35 I
+      1 R
+     36 S
+
+== Memory (free -m) ==
+               total        used        free      shared  buff/cache   available
+Mem:            8023         378        7304          12         557        7645
+Swap:              0           0           0
+
+== CPU and memory activity (vmstat 1 3) ==
+procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st gu
+ 2  0      0 7479948  18244 552672    0    0  2448    62  167    1  2  1 96  1  0  0
+ 0  0      0 7481388  18244 552776    0    0     0     0   82   80  0  0 100  0  0  0
+ 0  0      0 7481640  18244 552776    0    0     0     0   66   71  0  0 100  0  0  0
+
+== Load average and uptime ==
+0.11 0.04 0.01 1/104 361
+
+== Disk space and inodes ==
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/vda       ext4  252G   13G   30G  30% /
+Filesystem       Inodes  IUsed    IFree IUse% Mounted on
+/dev/vda       16777216 348835 16428381    3% /
+
+== Network interfaces ==
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 2091701     802    0    0    0     0          0         0  2091701     802    0    0    0     0       0          0
+  ifb0:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0
+
+== Users, groups and permissions ==
+uid=30033(portaladm) gid=30033(portaladm) groups=30033(portaladm)
+uid=996(portalsvc) gid=995(portalsvc) groups=995(portalsvc)
+drwxr-x--- 2 portalsvc portalsvc 4096 Nov 24 11:19 /tmp/portal_data
+as portaladm (other user), read results.csv: cat: /tmp/portal_data/results.csv: Permission denied
+as portalsvc (owner), read results.csv: result data
+
+== Firewall (iptables) inside a private network namespace: allow SSH 22, HTTP 80, HTTPS 443, drop the rest ==
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination         
+1    ACCEPT     0    --  0.0.0.0/0            0.0.0.0/0           
+2    ACCEPT     0    --  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+3    ACCEPT     6    --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+4    ACCEPT     6    --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+5    ACCEPT     6    --  0.0.0.0/0            0.0.0.0/0            tcp dpt:443
+
+== Service unit (systemd) for the portal ==
+[Unit]
+Description=University Result Portal
+After=network.target
+[Service]
+User=portalsvc
+WorkingDirectory=/opt/portal
+ExecStart=/usr/bin/gunicorn --workers 4 --bind 127.0.0.1:8000 app:app
+Restart=on-failure
+RestartSec=2
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target
+
+== Cleanup ==
+done

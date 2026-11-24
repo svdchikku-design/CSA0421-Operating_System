@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    image: result-portal
+    ports: ["8000:8000"]
+    environment:
+      DB_HOST: db
+      DB_USER: portal
+      DB_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    depends_on: [db]
+    deploy:
+      resources:
+        limits: {cpus: "0.50", memory: 256M}
+    restart: unless-stopped
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: portal
+      POSTGRES_DB: results
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    volumes:
+      - dbdata:/var/lib/postgresql/data     # named volume: data survives container removal
+volumes:
+  dbdata:
+secrets:
+  db_password:
+    file: ./db_password.txt

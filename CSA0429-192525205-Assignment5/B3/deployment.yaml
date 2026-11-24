@@ -1,0 +1,35 @@
+# B3 - Complete the Code: Kubernetes deployment of the result portal
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-portal
+spec:
+  # TODO 1 (completed): three replicas, selected by the label app=result-portal
+  replicas: 3
+  selector:
+    matchLabels:
+      app: result-portal
+  template:
+    metadata:
+      labels:
+        app: result-portal
+    spec:
+      containers:
+        - name: web
+          image: result-portal:1.0
+          ports:
+            - containerPort: 8000
+          # TODO 2 (completed): requests are what the scheduler reserves, limits are the hard cap
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet: {path: /health, port: 8000}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /health, port: 8000}
+            initialDelaySeconds: 10
